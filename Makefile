@@ -7,7 +7,7 @@ env-up:
 	@docker compose up -d todoservice-postgres
 
 env-down:
-	docker compose down todoservice-postgres
+	@docker compose down todoservice-postgres
 
 env-cleanup:
 	@read -p "Очистить все volume файлы окружения? Опасность утери данных. [y/N]: " ans; \
