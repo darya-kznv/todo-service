@@ -1,4 +1,4 @@
-package core_config
+package core_logger
 
 import (
 	"fmt"
@@ -7,8 +7,8 @@ import (
 )
 
 type Config struct {
-	Level  string `envconfig:"LEVEL" required: "true"`
-	Folder string `envconfig:"FOLDER" required: "true"`
+	Level  string `envconfig:"LEVEL" required:"true"`
+	Folder string `envconfig:"FOLDER" required:"true"`
 }
 
 func NewConfig() (Config, error) {
