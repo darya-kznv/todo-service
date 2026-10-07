@@ -53,4 +53,7 @@ migrate-action:
 		"$(action)"
 
 todoservice-run:
-	@go run cmd/todoservice/main.go
+	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
+	go mod tidy && \
+	go run cmd/todoservice/main.go
+
