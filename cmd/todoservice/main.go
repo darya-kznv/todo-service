@@ -8,6 +8,7 @@ import (
 	"syscall"
 
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
+	core_http_middleware "github.com/darya-kznv/todo-service/internal/core/transport/http/middleware"
 	core_http_server "github.com/darya-kznv/todo-service/internal/core/transport/http/server"
 	users_transport_http "github.com/darya-kznv/todo-service/internal/features/users/transport/http"
 	"go.uber.org/zap"
@@ -41,6 +42,10 @@ func main() {
 	httpServer := core_http_server.NewHTTPServer(
 		core_http_server.NewConfigMust(),
 		logger,
+		core_http_middleware.RequestID(),
+		core_http_middleware.Logger(logger),
+		core_http_middleware.Panic(),
+		core_http_middleware.Trace(),
 	)
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)
