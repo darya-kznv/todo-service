@@ -3,6 +3,7 @@ package users_transport_http
 import (
 	"net/http"
 
+	"github.com/darya-kznv/todo-service/internal/core/domain"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	core_http_request "github.com/darya-kznv/todo-service/internal/core/transport/http/request"
 	core_http_response "github.com/darya-kznv/todo-service/internal/core/transport/http/response"
@@ -33,5 +34,31 @@ func (h *UsersHTTPHandler) CreateUser(rw http.ResponseWriter, r *http.Request) {
 		responseHandler.ErrorResponse(err, "failed to decode and validate HTTP request")
 
 		return
+	}
+
+	userDomain := domainFromDTO(request)
+
+	userDomain, err := h.usersService.CreateUser(ctx, userDomain)
+	if err != nil {
+		responseHandler.ErrorResponse(err, "failed to create user")
+
+		return
+	}
+
+	response := dtoFromDomain(userDomain)
+
+	responseHandler.JSONResponse(response, http.StatusCreated)
+}
+
+func domainFromDTO(dto CreateUserRequest) domain.User {
+	return domain.NewUserUninitialized(dto.FullName, dto.PhoneNumber)
+}
+
+func dtoFromDomain(user domain.User) CreateUserResponse {
+	return CreateUserResponse{
+		ID:          user.ID,
+		Version:     user.Version,
+		FullName:    user.FullName,
+		PhoneNumber: user.PhoneNumber,
 	}
 }
