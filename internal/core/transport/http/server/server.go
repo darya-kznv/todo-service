@@ -16,14 +16,15 @@ type HTTPServer struct {
 	log    *core_logger.Logger
 }
 
-func NewHTTPServer(config Config) *HTTPServer {
+func NewHTTPServer(config Config, log *core_logger.Logger) *HTTPServer {
 	return &HTTPServer{
 		mux:    http.NewServeMux(),
 		config: config,
+		log:    log,
 	}
 }
 
-func (h *HTTPServer) RegisterAPIRouters(routers ...APIVersionRouter) {
+func (h *HTTPServer) RegisterAPIRouters(routers ...*APIVersionRouter) {
 	for _, router := range routers {
 		prefix := "/api/" + string(router.apiVersion)
 
