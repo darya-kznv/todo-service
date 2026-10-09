@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
+
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 )
 
@@ -15,7 +17,14 @@ func (s *UsersService) CreateUser(
 		return domain.User{}, fmt.Errorf("validate user domain: %w", err)
 	}
 
-	user, err := s.usersRepository.CreateUser(ctx, user)
+	readyUser := domain.NewUser(
+		uuid.New(),
+		1,
+		user.FullName,
+		user.PhoneNumber,
+	)
+
+	user, err := s.usersRepository.CreateUser(ctx, readyUser)
 	if err != nil {
 		return domain.User{}, fmt.Errorf("create user: %w", err)
 	}

@@ -3,6 +3,8 @@ package users_transport_http
 import (
 	"net/http"
 
+	"github.com/google/uuid"
+
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	core_http_request "github.com/darya-kznv/todo-service/internal/core/transport/http/request"
@@ -15,10 +17,10 @@ type CreateUserRequest struct {
 }
 
 type CreateUserResponse struct {
-	ID          int     `json:"id"`
-	Version     int     `json:"version"`
-	FullName    string  `json:"full_name"`
-	PhoneNumber *string `json:"phone_number"`
+	ID          uuid.UUID `json:"id"`
+	Version     int       `json:"version"`
+	FullName    string    `json:"full_name"`
+	PhoneNumber *string   `json:"phone_number"`
 }
 
 func (h *UsersHTTPHandler) CreateUser(rw http.ResponseWriter, r *http.Request) {

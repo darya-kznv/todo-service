@@ -4,18 +4,20 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/google/uuid"
+
 	core_errors "github.com/darya-kznv/todo-service/internal/core/errors"
 )
 
 type User struct {
-	ID          int
+	ID          uuid.UUID
 	Version     int
 	FullName    string
 	PhoneNumber *string
 }
 
 func NewUser(
-	id int,
+	id uuid.UUID,
 	version int,
 	fullName string,
 	phoneNumber *string,
@@ -64,7 +66,7 @@ func (u *User) Validate() error {
 
 		re := regexp.MustCompile(`^\+[0-9]+$`)
 
-		if re.MatchString(*u.PhoneNumber) {
+		if !re.MatchString(*u.PhoneNumber) {
 			return fmt.Errorf(
 				"invalid `PhoneNumber` format: %w",
 				core_errors.ErrInvalidArgument,
