@@ -12,7 +12,7 @@ func (r *UsersRepository) CreateUser(ctx context.Context, user domain.User) (dom
 	defer cancel()
 
 	query := `
-    INSERT INTO todoapp.users (id, version, full_name, phone_number)
+    INSERT INTO todoservice.users (id, version, full_name, phone_number)
     VALUES ($1, $2, $3, $4)
     RETURNING id, version, full_name, phone_number;`
 
