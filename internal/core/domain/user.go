@@ -3,6 +3,7 @@ package domain
 import (
 	"fmt"
 	"regexp"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -14,6 +15,7 @@ type User struct {
 	Version     int
 	FullName    string
 	PhoneNumber *string
+	CreatedAt   time.Time
 }
 
 func NewUser(
@@ -21,10 +23,20 @@ func NewUser(
 	version int,
 	fullName string,
 	phoneNumber *string,
+	createdAt time.Time,
 ) User {
 	return User{
 		ID:          id,
 		Version:     version,
+		FullName:    fullName,
+		PhoneNumber: phoneNumber,
+		CreatedAt:   createdAt,
+	}
+}
+
+func NewUserWithUUID(fullName string, phoneNumber *string) User {
+	return User{
+		ID:          uuid.New(),
 		FullName:    fullName,
 		PhoneNumber: phoneNumber,
 	}
@@ -39,6 +51,7 @@ func NewUserUninitialized(
 		UninitializedVersion,
 		fullName,
 		phoneNumber,
+		UninitializedCreatedAt,
 	)
 }
 

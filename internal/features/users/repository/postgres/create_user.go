@@ -12,11 +12,11 @@ func (r *UsersRepository) CreateUser(ctx context.Context, user domain.User) (dom
 	defer cancel()
 
 	query := `
-    INSERT INTO todoservice.users (id, version, full_name, phone_number)
-    VALUES ($1, $2, $3, $4)
-    RETURNING id, version, full_name, phone_number;`
+    INSERT INTO todoservice.users (id, full_name, phone_number)
+    VALUES ($1, $2, $3)
+    RETURNING id, version, full_name, phone_number, created_at;`
 
-	row := r.pool.QueryRow(ctx, query, user.ID, user.Version, user.FullName, user.PhoneNumber)
+	row := r.pool.QueryRow(ctx, query, user.ID, user.FullName, user.PhoneNumber)
 
 	var userModel UserModel
 
@@ -25,6 +25,7 @@ func (r *UsersRepository) CreateUser(ctx context.Context, user domain.User) (dom
 		&userModel.Version,
 		&userModel.FullName,
 		&userModel.PhoneNumber,
+		&userModel.CreatedAt,
 	)
 
 	if err != nil {
@@ -36,6 +37,7 @@ func (r *UsersRepository) CreateUser(ctx context.Context, user domain.User) (dom
 		userModel.Version,
 		userModel.FullName,
 		userModel.PhoneNumber,
+		userModel.CreatedAt,
 	)
 
 	return userDomain, nil

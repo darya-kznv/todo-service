@@ -1,8 +1,13 @@
 package domain
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 var (
-	UninitializedID      = uuid.Nil
-	UninitializedVersion = -1
+	UninitializedID        = uuid.Nil
+	UninitializedVersion   = -1
+	UninitializedCreatedAt = time.Time{}
 )
