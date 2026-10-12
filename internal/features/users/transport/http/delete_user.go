@@ -4,8 +4,8 @@ import (
 	"net/http"
 
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
+	core_http_request "github.com/darya-kznv/todo-service/internal/core/transport/http/request"
 	core_http_response "github.com/darya-kznv/todo-service/internal/core/transport/http/response"
-	core_http_utils "github.com/darya-kznv/todo-service/internal/core/transport/http/utils"
 )
 
 func (h *UsersHTTPHandler) DeleteUser(rw http.ResponseWriter, r *http.Request) {
@@ -13,7 +13,7 @@ func (h *UsersHTTPHandler) DeleteUser(rw http.ResponseWriter, r *http.Request) {
 	log := core_logger.FromContext(ctx)
 	responseHandler := core_http_response.NewHTTPResponseHandler(log, rw)
 
-	userID, err := core_http_utils.GetUUIDPathValue(r, "id")
+	userID, err := core_http_request.GetUUIDPathValue(r, "id")
 	if err != nil {
 		responseHandler.ErrorResponse(
 			err,
@@ -33,4 +33,5 @@ func (h *UsersHTTPHandler) DeleteUser(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	responseHandler.NoContentResponse()
+
 }

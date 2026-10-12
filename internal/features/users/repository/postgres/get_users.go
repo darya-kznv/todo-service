@@ -19,7 +19,7 @@ func (r *UsersRepository) GetUsers(
 	SELECT id, version, full_name, phone_number, created_at
 	FROM todoservice.users
 	ORDER BY created_at DESC 
-	LIMIT $1 OFFSET $2`
+	LIMIT $1 OFFSET $2;`
 
 	rows, err := r.pool.Query(
 		ctx,
