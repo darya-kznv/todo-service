@@ -1,7 +1,9 @@
 package users_transport_http
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
@@ -14,6 +16,32 @@ import (
 type PatchUserRequest struct {
 	FullName    core_http_types.Nullable[string] `json:"full_name"`
 	PhoneNumber core_http_types.Nullable[string] `json:"phone_number"`
+}
+
+func (r *PatchUserRequest) Validate() error {
+	if r.FullName.Set {
+		if r.FullName.Value == nil {
+			return fmt.Errorf("'FullName' can't be NULL")
+		}
+
+		fullNameLength := len([]rune(*r.FullName.Value))
+		if fullNameLength < 3 || fullNameLength > 100 {
+			return fmt.Errorf("`FullName` must be between 3 and 100 symbols")
+		}
+	}
+
+	if r.PhoneNumber.Set {
+		PhoneNumberLength := len([]rune(*r.PhoneNumber.Value))
+		if PhoneNumberLength < 10 || PhoneNumberLength > 15 {
+			return fmt.Errorf("`PhoneNumber` must be between 10 and 15 symbols")
+		}
+
+		if !strings.HasPrefix(*r.PhoneNumber.Value, "+") {
+			return fmt.Errorf("`PhoneNumber` must be startswith '+' symbol")
+		}
+	}
+
+	return nil
 }
 
 type PatchUserResponse UserDTOResponse
@@ -60,6 +88,6 @@ func (h *UsersHTTPHandler) PatchUser(rw http.ResponseWriter, r *http.Request) {
 func userPatchFromRequest(request PatchUserRequest) domain.UserPatch {
 	return domain.UserPatch{
 		FullName:    request.FullName.ToDomain(),
-		PhoneNumber: request.FullName.ToDomain(),
+		PhoneNumber: request.PhoneNumber.ToDomain(),
 	}
 }
