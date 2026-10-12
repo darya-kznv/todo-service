@@ -10,6 +10,8 @@ import (
 	core_errors "github.com/darya-kznv/todo-service/internal/core/errors"
 )
 
+var phoneRegex = regexp.MustCompile(`^\+[0-9]+$`)
+
 type User struct {
 	ID          uuid.UUID
 	Version     int
@@ -77,9 +79,7 @@ func (u *User) Validate() error {
 			)
 		}
 
-		re := regexp.MustCompile(`^\+[0-9]+$`)
-
-		if !re.MatchString(*u.PhoneNumber) {
+		if !phoneRegex.MatchString(*u.PhoneNumber) {
 			return fmt.Errorf(
 				"invalid `PhoneNumber` format: %w",
 				core_errors.ErrInvalidArgument,

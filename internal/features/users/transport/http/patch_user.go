@@ -3,6 +3,7 @@ package users_transport_http
 import (
 	"fmt"
 	"net/http"
+	"regexp"
 	"strings"
 
 	"github.com/darya-kznv/todo-service/internal/core/domain"
@@ -12,6 +13,8 @@ import (
 	core_http_response "github.com/darya-kznv/todo-service/internal/core/transport/http/response"
 	core_http_types "github.com/darya-kznv/todo-service/internal/core/transport/http/types"
 )
+
+var patchPhoneRegex = regexp.MustCompile(`^\+[0-9]+$`)
 
 type PatchUserRequest struct {
 	FullName    core_http_types.Nullable[string] `json:"full_name"`
@@ -35,6 +38,13 @@ func (r *PatchUserRequest) Validate() error {
 
 	if r.PhoneNumber.Set {
 		if r.PhoneNumber.Value != nil {
+			if !patchPhoneRegex.MatchString(*r.PhoneNumber.Value) {
+				return fmt.Errorf(
+					"`PhoneNumber` must start with '+' and contain only digits: %w",
+					core_errors.ErrInvalidArgument,
+				)
+			}
+
 			PhoneNumberLength := len([]rune(*r.PhoneNumber.Value))
 			if PhoneNumberLength < 10 || PhoneNumberLength > 15 {
 				return fmt.Errorf(
