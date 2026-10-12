@@ -26,6 +26,13 @@ func GetInitQueryParams(r *http.Request, key string) (*int, error) {
 		)
 	}
 
+	if val < 0 {
+		return nil, fmt.Errorf(
+			"param must be non-negative: %w",
+			core_errors.ErrInvalidArgument,
+		)
+	}
+
 	return &val, nil
 
 }

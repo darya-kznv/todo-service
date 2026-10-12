@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/darya-kznv/todo-service/internal/core/domain"
+	core_errors "github.com/darya-kznv/todo-service/internal/core/errors"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	core_http_request "github.com/darya-kznv/todo-service/internal/core/transport/http/request"
 	core_http_response "github.com/darya-kznv/todo-service/internal/core/transport/http/response"
@@ -20,12 +21,15 @@ type PatchUserRequest struct {
 func (r *PatchUserRequest) Validate() error {
 	if r.FullName.Set {
 		if r.FullName.Value == nil {
-			return fmt.Errorf("'FullName' can't be NULL")
+			return fmt.Errorf("'FullName' can't be NULL: %w", core_errors.ErrInvalidArgument)
 		}
 
 		fullNameLength := len([]rune(*r.FullName.Value))
 		if fullNameLength < 3 || fullNameLength > 100 {
-			return fmt.Errorf("`FullName` must be between 3 and 100 symbols")
+			return fmt.Errorf(
+				"`FullName` must be between 3 and 100 symbols: %w",
+				core_errors.ErrInvalidArgument,
+			)
 		}
 	}
 
@@ -33,11 +37,17 @@ func (r *PatchUserRequest) Validate() error {
 		if r.PhoneNumber.Value != nil {
 			PhoneNumberLength := len([]rune(*r.PhoneNumber.Value))
 			if PhoneNumberLength < 10 || PhoneNumberLength > 15 {
-				return fmt.Errorf("`PhoneNumber` must be between 10 and 15 symbols")
+				return fmt.Errorf(
+					"`PhoneNumber` must be between 10 and 15 symbols: %w",
+					core_errors.ErrInvalidArgument,
+				)
 			}
 
 			if !strings.HasPrefix(*r.PhoneNumber.Value, "+") {
-				return fmt.Errorf("`PhoneNumber` must be startswith '+' symbol")
+				return fmt.Errorf(
+					"`PhoneNumber` must start with '+' symbol: %w",
+					core_errors.ErrInvalidArgument,
+				)
 			}
 		}
 	}

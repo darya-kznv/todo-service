@@ -23,12 +23,12 @@ type APIVersionRouter struct {
 
 func NewAPIVersionRouter(
 	apiVersion ApiVersion,
-	middlewate ...core_http_middleware.Middleware,
+	middleware ...core_http_middleware.Middleware,
 ) *APIVersionRouter {
 	return &APIVersionRouter{
 		ServeMux:   http.NewServeMux(),
 		apiVersion: apiVersion,
-		middleware: middlewate,
+		middleware: middleware,
 	}
 }
 
