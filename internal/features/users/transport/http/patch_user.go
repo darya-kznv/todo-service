@@ -30,13 +30,15 @@ func (r *PatchUserRequest) Validate() error {
 	}
 
 	if r.PhoneNumber.Set {
-		PhoneNumberLength := len([]rune(*r.PhoneNumber.Value))
-		if PhoneNumberLength < 10 || PhoneNumberLength > 15 {
-			return fmt.Errorf("`PhoneNumber` must be between 10 and 15 symbols")
-		}
+		if r.PhoneNumber.Value != nil {
+			PhoneNumberLength := len([]rune(*r.PhoneNumber.Value))
+			if PhoneNumberLength < 10 || PhoneNumberLength > 15 {
+				return fmt.Errorf("`PhoneNumber` must be between 10 and 15 symbols")
+			}
 
-		if !strings.HasPrefix(*r.PhoneNumber.Value, "+") {
-			return fmt.Errorf("`PhoneNumber` must be startswith '+' symbol")
+			if !strings.HasPrefix(*r.PhoneNumber.Value, "+") {
+				return fmt.Errorf("`PhoneNumber` must be startswith '+' symbol")
+			}
 		}
 	}
 
@@ -81,7 +83,7 @@ func (h *UsersHTTPHandler) PatchUser(rw http.ResponseWriter, r *http.Request) {
 
 	response := PatchUserResponse(userDTOFromDomain(userDomain))
 
-	responseHandler.JSONResponse(response, http.StatusCreated)
+	responseHandler.JSONResponse(response, http.StatusOK)
 }
 
 func userPatchFromRequest(request PatchUserRequest) domain.UserPatch {

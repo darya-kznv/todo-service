@@ -7,7 +7,7 @@ CREATE TABLE todoservice.users (
     phone_number VARCHAR(15)           CHECK (
         phone_number ~ '^\+[0-9]+$'
         AND char_length(phone_number) BETWEEN 10 AND 15
-    ),
+    )
 );
 
 CREATE TABLE todoservice.tasks (

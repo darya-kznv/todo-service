@@ -7,6 +7,11 @@ import (
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 )
 
+const (
+	defaultLimit  = 10
+	defaultOffset = 0
+)
+
 func (r *UsersRepository) GetUsers(
 	ctx context.Context,
 	limit *int,
@@ -14,6 +19,16 @@ func (r *UsersRepository) GetUsers(
 ) ([]domain.User, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
+
+	limitVal := defaultLimit
+	if limit != nil {
+		limitVal = *limit
+	}
+
+	offsetVal := defaultOffset
+	if offset != nil {
+		offsetVal = *offset
+	}
 
 	query := `
 	SELECT id, version, full_name, phone_number, created_at
@@ -24,8 +39,8 @@ func (r *UsersRepository) GetUsers(
 	rows, err := r.pool.Query(
 		ctx,
 		query,
-		limit,
-		offset,
+		limitVal,
+		offsetVal,
 	)
 
 	if err != nil {

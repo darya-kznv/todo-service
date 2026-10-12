@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/darya-kznv/todo-service/internal/core/domain"
-	core_errors "github.com/darya-kznv/todo-service/internal/core/errors"
 )
 
 func (s *UsersService) GetUser(
@@ -18,7 +17,7 @@ func (s *UsersService) GetUser(
 	if err != nil {
 		return domain.User{}, fmt.Errorf(
 			"get user from repository: %w",
-			core_errors.ErrNotFound,
+			err,
 		)
 	}
 

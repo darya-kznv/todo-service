@@ -5,8 +5,6 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-
-	core_errors "github.com/darya-kznv/todo-service/internal/core/errors"
 )
 
 func (s *UsersService) DeleteUser(
@@ -15,10 +13,7 @@ func (s *UsersService) DeleteUser(
 ) error {
 	err := s.usersRepository.DeleteUser(ctx, id)
 	if err != nil {
-		return fmt.Errorf(
-			"delete user from repository: %w",
-			core_errors.ErrNotFound,
-		)
+		return fmt.Errorf("delete user from repository: %w", err)
 	}
 
 	return nil
