@@ -3,6 +3,8 @@ package users_service
 import (
 	"context"
 
+	"github.com/google/uuid"
+
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 )
 
@@ -21,6 +23,11 @@ type UsersRepository interface {
 		limit *int,
 		offset *int,
 	) ([]domain.User, error)
+
+	GetUser(
+		ctx context.Context,
+		id uuid.UUID,
+	) (domain.User, error)
 }
 
 func NewUsersService(

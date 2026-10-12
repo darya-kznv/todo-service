@@ -6,6 +6,7 @@ import (
 
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 	core_http_server "github.com/darya-kznv/todo-service/internal/core/transport/http/server"
+	"github.com/google/uuid"
 )
 
 type UsersHTTPHandler struct {
@@ -23,6 +24,11 @@ type UsersService interface {
 		limit *int,
 		offset *int,
 	) ([]domain.User, error)
+
+	GetUser(
+		ctx context.Context,
+		id uuid.UUID,
+	) (domain.User, error)
 }
 
 func NewUsersHTTPHandler(usersService UsersService) *UsersHTTPHandler {
@@ -42,6 +48,11 @@ func (h *UsersHTTPHandler) Routes() []core_http_server.Route {
 			Method:  http.MethodGet,
 			Path:    "/users",
 			Handler: h.GetUsers,
+		},
+		{
+			Method:  http.MethodGet,
+			Path:    "/users/{id}",
+			Handler: h.GetUser,
 		},
 	}
 }
