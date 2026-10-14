@@ -30,7 +30,7 @@ func (r *UsersRepository) PatchUser(
 		query,
 		user.FullName,
 		user.PhoneNumber,
-		user.ID,
+		id,
 		user.Version,
 	)
 
