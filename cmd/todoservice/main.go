@@ -11,6 +11,9 @@ import (
 	core_pgx_pool "github.com/darya-kznv/todo-service/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/darya-kznv/todo-service/internal/core/transport/http/middleware"
 	core_http_server "github.com/darya-kznv/todo-service/internal/core/transport/http/server"
+	tasks_postgres_repository "github.com/darya-kznv/todo-service/internal/features/tasks/repository/postgres"
+	tasks_service "github.com/darya-kznv/todo-service/internal/features/tasks/service"
+	tasks_transport_http "github.com/darya-kznv/todo-service/internal/features/tasks/transport/http"
 	users_postgres_repository "github.com/darya-kznv/todo-service/internal/features/users/repository/postgres"
 	users_service "github.com/darya-kznv/todo-service/internal/features/users/service"
 	users_transport_http "github.com/darya-kznv/todo-service/internal/features/users/transport/http"
@@ -38,10 +41,8 @@ func main() {
 	}
 	defer pool.Close()
 
-	logger.Debug("initializing feature", zap.String("feature", "users"))
-	usersRepository := users_postgres_repository.NewUsersRepository(pool)
-	usersService := users_service.NewUsersService(usersRepository)
-	usersTransportHTTP := users_transport_http.NewUsersHTTPHandler(usersService)
+	usersTransportHTTP := initUsers(pool, logger)
+	tasksTransportHTTP := initTasks(pool, logger)
 
 	logger.Debug("initializing HTTP server")
 	httpServer := core_http_server.NewHTTPServer(
@@ -55,10 +56,29 @@ func main() {
 
 	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersion1)
 	apiVersionRouter.RegisterRoutes(usersTransportHTTP.Routes()...)
+	apiVersionRouter.RegisterRoutes(tasksTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)
 
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Error("HTTP server run error", zap.Error(err))
 	}
+}
+
+func initUsers(pool *core_pgx_pool.Pool, logger *core_logger.Logger) *users_transport_http.UsersHTTPHandler {
+	logger.Debug("initializing feature", zap.String("feature", "users"))
+
+	repo := users_postgres_repository.NewUsersRepository(pool)
+	service := users_service.NewUsersService(repo)
+
+	return users_transport_http.NewUsersHTTPHandler(service)
+}
+
+func initTasks(pool *core_pgx_pool.Pool, logger *core_logger.Logger) *tasks_transport_http.TasksHTTPHandler {
+	logger.Debug("initializing feature", zap.String("feature", "tasks"))
+
+	repo := tasks_postgres_repository.NewTasksRepository(pool)
+	service := tasks_service.NewTasksService(repo)
+
+	return tasks_transport_http.NewTasksHTTPHandler(service)
 }
