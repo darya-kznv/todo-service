@@ -6,7 +6,9 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
+	core_clock "github.com/darya-kznv/todo-service/internal/core/clock"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	core_pgx_pool "github.com/darya-kznv/todo-service/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/darya-kznv/todo-service/internal/core/transport/http/middleware"
@@ -20,7 +22,13 @@ import (
 	"go.uber.org/zap"
 )
 
+var (
+	timeZone = time.UTC
+)
+
 func main() {
+	time.Local = timeZone
+
 	ctx, cancel := signal.NotifyContext(
 		context.Background(),
 		syscall.SIGINT, syscall.SIGTERM,
@@ -34,6 +42,8 @@ func main() {
 	}
 	defer logger.Close()
 
+	logger.Debug("aplication debug time zone", zap.Any("zone", timeZone))
+
 	logger.Debug("initializing postgres connection pool")
 	pool, err := core_pgx_pool.NewPool(ctx, core_pgx_pool.NewConfigMust())
 	if err != nil {
@@ -41,8 +51,9 @@ func main() {
 	}
 	defer pool.Close()
 
-	usersTransportHTTP := initUsers(pool, logger)
-	tasksTransportHTTP := initTasks(pool, logger)
+	clock := core_clock.NewUTCClock()
+	usersTransportHTTP := initUsers(pool, logger, clock)
+	tasksTransportHTTP := initTasks(pool, logger, clock)
 
 	logger.Debug("initializing HTTP server")
 	httpServer := core_http_server.NewHTTPServer(
@@ -65,20 +76,28 @@ func main() {
 	}
 }
 
-func initUsers(pool *core_pgx_pool.Pool, logger *core_logger.Logger) *users_transport_http.UsersHTTPHandler {
+func initUsers(
+	pool *core_pgx_pool.Pool,
+	logger *core_logger.Logger,
+	clock core_clock.Clock,
+) *users_transport_http.UsersHTTPHandler {
 	logger.Debug("initializing feature", zap.String("feature", "users"))
 
 	repo := users_postgres_repository.NewUsersRepository(pool)
-	service := users_service.NewUsersService(repo)
+	service := users_service.NewUsersService(repo, clock)
 
 	return users_transport_http.NewUsersHTTPHandler(service)
 }
 
-func initTasks(pool *core_pgx_pool.Pool, logger *core_logger.Logger) *tasks_transport_http.TasksHTTPHandler {
+func initTasks(
+	pool *core_pgx_pool.Pool,
+	logger *core_logger.Logger,
+	clock core_clock.Clock,
+) *tasks_transport_http.TasksHTTPHandler {
 	logger.Debug("initializing feature", zap.String("feature", "tasks"))
 
 	repo := tasks_postgres_repository.NewTasksRepository(pool)
-	service := tasks_service.NewTasksService(repo)
+	service := tasks_service.NewTasksService(repo, clock)
 
 	return tasks_transport_http.NewTasksHTTPHandler(service)
 }

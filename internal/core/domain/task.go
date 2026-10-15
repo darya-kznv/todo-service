@@ -53,12 +53,12 @@ func NewTaskUninitialized(
 		description,
 		false,
 		nil,
-		time.Now(),
+		UninitializedCreatedAt,
 		authorUserID,
 	)
 }
 
-func (t Task) Initialized() (Task, error) {
+func (t Task) Initialized(createdAt time.Time) (Task, error) {
 	if t.ID != UninitializedID {
 		return Task{}, fmt.Errorf(
 			"task is already initialized: %w",
@@ -67,7 +67,7 @@ func (t Task) Initialized() (Task, error) {
 	}
 
 	t.ID = uuid.New()
-	t.CreatedAt = time.Now().UTC()
+	t.CreatedAt = createdAt
 	t.Completed = false
 	t.CompletedAt = nil
 

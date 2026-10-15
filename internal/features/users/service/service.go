@@ -5,11 +5,13 @@ import (
 
 	"github.com/google/uuid"
 
+	core_clock "github.com/darya-kznv/todo-service/internal/core/clock"
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 )
 
 type UsersService struct {
 	usersRepository UsersRepository
+	clock           core_clock.Clock
 }
 
 type UsersRepository interface {
@@ -43,8 +45,10 @@ type UsersRepository interface {
 
 func NewUsersService(
 	usersRepository UsersRepository,
+	clock core_clock.Clock,
 ) *UsersService {
 	return &UsersService{
 		usersRepository: usersRepository,
+		clock:           clock,
 	}
 }
