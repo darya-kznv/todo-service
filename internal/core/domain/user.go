@@ -49,22 +49,12 @@ func NewUserUninitialized(
 	)
 }
 
-func (u User) Initialized(createdAt time.Time) (User, error) {
-	if u.ID != UninitializedID {
-		return User{}, fmt.Errorf(
-			"user is already initialized: %w",
-			core_errors.ErrInvalidArgument,
-		)
+func NewUserWithUUID(fullName string, phoneNumber *string) User {
+	return User{
+		ID:          uuid.New(),
+		FullName:    fullName,
+		PhoneNumber: phoneNumber,
 	}
-
-	u.ID = uuid.New()
-	u.CreatedAt = createdAt
-
-	if err := u.Validate(); err != nil {
-		return User{}, fmt.Errorf("validate initialized user: %w", err)
-	}
-
-	return u, nil
 }
 
 func (u *User) Validate() error {

@@ -58,24 +58,20 @@ func NewTaskUninitialized(
 	)
 }
 
-func (t Task) Initialized(createdAt time.Time) (Task, error) {
-	if t.ID != UninitializedID {
-		return Task{}, fmt.Errorf(
-			"task is already initialized: %w",
-			core_errors.ErrInvalidArgument,
-		)
+func NewTaskWithUUID(
+	title string,
+	description *string,
+	authorUserID uuid.UUID,
+) Task {
+	return Task{
+		ID:           uuid.New(),
+		Title:        title,
+		Description:  description,
+		Completed:    false,
+		CompletedAt:  nil,
+		CreatedAt:    time.Now(),
+		AuthorUserID: authorUserID,
 	}
-
-	t.ID = uuid.New()
-	t.CreatedAt = createdAt
-	t.Completed = false
-	t.CompletedAt = nil
-
-	if err := t.Validate(); err != nil {
-		return Task{}, fmt.Errorf("validate initialized task: %w", err)
-	}
-
-	return t, nil
 }
 
 func (t *Task) Validate() error {
@@ -111,7 +107,7 @@ func (t *Task) Validate() error {
 
 		if t.CompletedAt.Before(t.CreatedAt) {
 			return fmt.Errorf(
-				"`CompletedAt` can't be before if `CreatedAt`: %w",
+				"`CompletedAt` can't be before `CreatedAt`: %w",
 				core_errors.ErrInvalidArgument,
 			)
 		}
@@ -163,7 +159,7 @@ func (p *TaskPatch) Validate() error {
 	return nil
 }
 
-func (t *Task) ApplyPatch(patch TaskPatch, now time.Time) error {
+func (t *Task) ApplyPatch(patch TaskPatch) error {
 	if err := patch.Validate(); err != nil {
 		return fmt.Errorf("validate task patch: %w", err)
 	}
@@ -182,7 +178,7 @@ func (t *Task) ApplyPatch(patch TaskPatch, now time.Time) error {
 		tmp.Completed = *patch.Completed.Value
 
 		if tmp.Completed {
-			completedAt := now
+			completedAt := time.Now()
 			tmp.CompletedAt = &completedAt
 		} else {
 			tmp.CompletedAt = nil

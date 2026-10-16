@@ -11,12 +11,12 @@ func (s *UsersService) CreateUser(
 	ctx context.Context,
 	user domain.User,
 ) (domain.User, error) {
-	initializedUser, err := user.Initialized(s.clock.Now())
-	if err != nil {
-		return domain.User{}, fmt.Errorf("initialize user domain: %w", err)
+	userWithUUID := domain.NewUserWithUUID(user.FullName, user.PhoneNumber)
+	if err := userWithUUID.Validate(); err != nil {
+		return domain.User{}, fmt.Errorf("validate user domain: %w", err)
 	}
 
-	createdUser, err := s.usersRepository.CreateUser(ctx, initializedUser)
+	createdUser, err := s.usersRepository.CreateUser(ctx, userWithUUID)
 	if err != nil {
 		return domain.User{}, fmt.Errorf("create user: %w", err)
 	}
