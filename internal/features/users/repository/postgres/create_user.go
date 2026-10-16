@@ -12,11 +12,11 @@ func (r *UsersRepository) CreateUser(ctx context.Context, user domain.User) (dom
 	defer cancel()
 
 	query := `
-    INSERT INTO todoservice.users (id, full_name, phone_number, created_at)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO todoservice.users (id, full_name, phone_number)
+    VALUES ($1, $2, $3)
     RETURNING id, version, full_name, phone_number, created_at;`
 
-	row := r.pool.QueryRow(ctx, query, user.ID, user.FullName, user.PhoneNumber, user.CreatedAt)
+	row := r.pool.QueryRow(ctx, query, user.ID, user.FullName, user.PhoneNumber)
 
 	var userModel UserModel
 

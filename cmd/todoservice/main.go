@@ -8,7 +8,6 @@ import (
 	"syscall"
 	"time"
 
-	core_clock "github.com/darya-kznv/todo-service/internal/core/clock"
 	core_config "github.com/darya-kznv/todo-service/internal/core/config"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	core_pgx_pool "github.com/darya-kznv/todo-service/internal/core/repository/postgres/pool/pgx"
@@ -49,9 +48,8 @@ func main() {
 	}
 	defer pool.Close()
 
-	clock := core_clock.NewUTCClock()
-	usersTransportHTTP := initUsers(pool, logger, clock)
-	tasksTransportHTTP := initTasks(pool, logger, clock)
+	usersTransportHTTP := initUsers(pool, logger)
+	tasksTransportHTTP := initTasks(pool, logger)
 
 	logger.Debug("initializing HTTP server")
 	httpServer := core_http_server.NewHTTPServer(
@@ -77,12 +75,11 @@ func main() {
 func initUsers(
 	pool *core_pgx_pool.Pool,
 	logger *core_logger.Logger,
-	clock core_clock.Clock,
 ) *users_transport_http.UsersHTTPHandler {
 	logger.Debug("initializing feature", zap.String("feature", "users"))
 
 	repo := users_postgres_repository.NewUsersRepository(pool)
-	service := users_service.NewUsersService(repo, clock)
+	service := users_service.NewUsersService(repo)
 
 	return users_transport_http.NewUsersHTTPHandler(service)
 }
@@ -90,12 +87,11 @@ func initUsers(
 func initTasks(
 	pool *core_pgx_pool.Pool,
 	logger *core_logger.Logger,
-	clock core_clock.Clock,
 ) *tasks_transport_http.TasksHTTPHandler {
 	logger.Debug("initializing feature", zap.String("feature", "tasks"))
 
 	repo := tasks_postgres_repository.NewTasksRepository(pool)
-	service := tasks_service.NewTasksService(repo, clock)
+	service := tasks_service.NewTasksService(repo)
 
 	return tasks_transport_http.NewTasksHTTPHandler(service)
 }

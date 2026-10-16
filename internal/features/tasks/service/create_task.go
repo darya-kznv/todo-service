@@ -11,12 +11,13 @@ func (s *TasksService) CreateTask(
 	ctx context.Context,
 	task domain.Task,
 ) (domain.Task, error) {
-	initializedTask, err := task.Initialized(s.clock.Now())
-	if err != nil {
-		return domain.Task{}, fmt.Errorf("initialize task domain: %w", err)
+	if err := task.Validate(); err != nil {
+		return domain.Task{}, fmt.Errorf("validate task domain: %w", err)
 	}
 
-	createdTask, err := s.tasksRepository.CreateTask(ctx, initializedTask)
+	taskWithUUID := domain.NewTaskWithUUID(task.Title, task.Description, task.AuthorUserID)
+
+	createdTask, err := s.tasksRepository.CreateTask(ctx, taskWithUUID)
 	if err != nil {
 		return domain.Task{}, fmt.Errorf("create task: %w", err)
 	}
