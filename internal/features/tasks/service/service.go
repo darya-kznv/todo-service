@@ -25,6 +25,11 @@ type TasksRepository interface {
 		offset *int,
 		userID *uuid.UUID,
 	) ([]domain.Task, error)
+
+	DeleteTask(
+		ctx context.Context,
+		id uuid.UUID,
+	) error
 }
 
 func NewTasksService(
