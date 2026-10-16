@@ -3,6 +3,7 @@ package tasks_postgres_repository
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 	"github.com/google/uuid"
@@ -32,23 +33,25 @@ func (r *TasksRepository) GetTasks(
 		offsetVal = *offset
 	}
 
-	query := `
+	var query strings.Builder
+
+	query.WriteString(`
 	SELECT id, version, title, description, completed, created_at, completed_at, author_user_id
-	FROM todoservice.tasks
-	%s
-	ORDER BY created_at DESC, id ASC
-	LIMIT $1 OFFSET $2;`
+	FROM todoservice.tasks`)
 
 	args := []any{limitVal, offsetVal}
 
 	if userID != nil {
-		query = fmt.Sprintf(query, "WHERE author_user_id = $3")
+		query.WriteString(`
+	WHERE author_user_id = $3`)
 		args = append(args, *userID)
-	} else {
-		query = fmt.Sprintf(query, "")
 	}
 
-	rows, err := r.pool.Query(ctx, query, args...)
+	query.WriteString(`
+	ORDER BY created_at DESC, id ASC
+	LIMIT $1 OFFSET $2;`)
+
+	rows, err := r.pool.Query(ctx, query.String(), args...)
 	if err != nil {
 		return nil, fmt.Errorf("select tasks: %w", err)
 	}
