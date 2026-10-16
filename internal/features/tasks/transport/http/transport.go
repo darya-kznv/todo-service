@@ -26,6 +26,11 @@ type TasksService interface {
 		userID *uuid.UUID,
 	) ([]domain.Task, error)
 
+	GetTask(
+		ctx context.Context,
+		id uuid.UUID,
+	) (domain.Task, error)
+
 	DeleteTask(
 		ctx context.Context,
 		id uuid.UUID,
@@ -55,6 +60,11 @@ func (h *TasksHTTPHandler) Routes() []core_http_server.Route {
 			Method:  http.MethodGet,
 			Path:    "/tasks",
 			Handler: h.GetTasks,
+		},
+		{
+			Method:  http.MethodGet,
+			Path:    "/tasks/{id}",
+			Handler: h.GetTask,
 		},
 		{
 			Method:  http.MethodDelete,
