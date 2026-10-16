@@ -19,6 +19,17 @@ env-cleanup:
 		echo "Очистка окружения отменена"; \
 	fi
 
+logs-cleanup:
+	@read -p "Удалить старые log-файлы? [y/N]: " ans; \
+	if [ "$$ans" = "y" ]; then \
+		if [ -d "${PROJECT_ROOT}/out/logs" ]; then \
+			find "${PROJECT_ROOT}/out/logs" -type f -name '*.log' -delete; \
+		fi; \
+		echo "Log-файлы удалены"; \
+	else \
+		echo "Удаление log-файлов отменено"; \
+	fi
+
 env-port-forward:
 	@docker compose up -d port-forwarder
 
