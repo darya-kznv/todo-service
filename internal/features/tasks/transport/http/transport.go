@@ -6,6 +6,7 @@ import (
 
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 	core_http_server "github.com/darya-kznv/todo-service/internal/core/transport/http/server"
+	"github.com/google/uuid"
 )
 
 type TasksHTTPHandler struct {
@@ -17,6 +18,13 @@ type TasksService interface {
 		ctx context.Context,
 		task domain.Task,
 	) (domain.Task, error)
+
+	GetTasks(
+		ctx context.Context,
+		limit *int,
+		offset *int,
+		userID *uuid.UUID,
+	) ([]domain.Task, error)
 }
 
 func NewTasksHTTPHandler(tasksService TasksService) *TasksHTTPHandler {
@@ -31,6 +39,11 @@ func (h *TasksHTTPHandler) Routes() []core_http_server.Route {
 			Method:  http.MethodPost,
 			Path:    "/tasks",
 			Handler: h.CreateTask,
+		},
+		{
+			Method:  http.MethodGet,
+			Path:    "/tasks",
+			Handler: h.GetTasks,
 		},
 	}
 }

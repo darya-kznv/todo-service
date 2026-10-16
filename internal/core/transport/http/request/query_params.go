@@ -8,6 +8,15 @@ import (
 	core_errors "github.com/darya-kznv/todo-service/internal/core/errors"
 )
 
+func GetStringQueryParam(r *http.Request, key string) *string {
+	param := r.URL.Query().Get(key)
+	if param == "" {
+		return nil
+	}
+
+	return &param
+}
+
 func GetInitQueryParams(r *http.Request, key string) (*int, error) {
 	param := r.URL.Query().Get(key)
 
@@ -27,5 +36,4 @@ func GetInitQueryParams(r *http.Request, key string) (*int, error) {
 	}
 
 	return &val, nil
-
 }

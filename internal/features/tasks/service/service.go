@@ -5,6 +5,7 @@ import (
 
 	core_clock "github.com/darya-kznv/todo-service/internal/core/clock"
 	"github.com/darya-kznv/todo-service/internal/core/domain"
+	"github.com/google/uuid"
 )
 
 type TasksService struct {
@@ -17,6 +18,13 @@ type TasksRepository interface {
 		ctx context.Context,
 		domain domain.Task,
 	) (domain.Task, error)
+
+	GetTasks(
+		ctx context.Context,
+		limit *int,
+		offset *int,
+		userID *uuid.UUID,
+	) ([]domain.Task, error)
 }
 
 func NewTasksService(
