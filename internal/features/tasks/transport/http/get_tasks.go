@@ -6,7 +6,6 @@ import (
 
 	"github.com/google/uuid"
 
-	core_errors "github.com/darya-kznv/todo-service/internal/core/errors"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	core_http_request "github.com/darya-kznv/todo-service/internal/core/transport/http/request"
 	core_http_response "github.com/darya-kznv/todo-service/internal/core/transport/http/response"
@@ -54,20 +53,10 @@ func getTasksQueryParams(r *http.Request) (*int, *int, *uuid.UUID, error) {
 		return nil, nil, nil, fmt.Errorf("get 'offset' query param: %w", err)
 	}
 
-	authorUserIDParam := core_http_request.GetStringQueryParam(r, authorUserIDQueryParamKey)
-	if authorUserIDParam == nil {
-		return limit, offset, nil, nil
-	}
-
-	authorUserID, err := uuid.Parse(*authorUserIDParam)
+	authorUserID, err := core_http_request.GetUUIDQueryParam(r, authorUserIDQueryParamKey)
 	if err != nil {
-		return nil, nil, nil, fmt.Errorf(
-			"query param '%s' is not a valid UUID: %v: %w",
-			authorUserIDQueryParamKey,
-			err,
-			core_errors.ErrInvalidArgument,
-		)
+		return nil, nil, nil, fmt.Errorf("get '%s' query param: %w", authorUserIDQueryParamKey, err)
 	}
 
-	return limit, offset, &authorUserID, nil
+	return limit, offset, authorUserID, nil
 }

@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	core_errors "github.com/darya-kznv/todo-service/internal/core/errors"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	core_http_request "github.com/darya-kznv/todo-service/internal/core/transport/http/request"
 	core_http_response "github.com/darya-kznv/todo-service/internal/core/transport/http/response"
@@ -48,9 +47,9 @@ func (h *StatisticsHTTPHandler) GetStatistics(rw http.ResponseWriter, r *http.Re
 }
 
 func getStatisticsQueryParams(r *http.Request) (*uuid.UUID, *time.Time, *time.Time, error) {
-	userID, err := getOptionalUserID(r)
+	userID, err := core_http_request.GetUUIDQueryParam(r, userIDQueryParamKey)
 	if err != nil {
-		return nil, nil, nil, err
+		return nil, nil, nil, fmt.Errorf("get '%s' query param: %w", userIDQueryParamKey, err)
 	}
 
 	from, err := core_http_request.GetDateQueryParam(r, fromQueryParamKey)
@@ -64,23 +63,4 @@ func getStatisticsQueryParams(r *http.Request) (*uuid.UUID, *time.Time, *time.Ti
 	}
 
 	return userID, from, to, nil
-}
-
-func getOptionalUserID(r *http.Request) (*uuid.UUID, error) {
-	param := core_http_request.GetStringQueryParam(r, userIDQueryParamKey)
-	if param == nil {
-		return nil, nil
-	}
-
-	userID, err := uuid.Parse(*param)
-	if err != nil {
-		return nil, fmt.Errorf(
-			"query param '%s' is not a valid UUID: %v: %w",
-			userIDQueryParamKey,
-			err,
-			core_errors.ErrInvalidArgument,
-		)
-	}
-
-	return &userID, nil
 }
