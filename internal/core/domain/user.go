@@ -36,14 +36,6 @@ func NewUser(
 	}
 }
 
-func NewUserWithUUID(fullName string, phoneNumber *string) User {
-	return User{
-		ID:          uuid.New(),
-		FullName:    fullName,
-		PhoneNumber: phoneNumber,
-	}
-}
-
 func NewUserUninitialized(
 	fullName string,
 	phoneNumber *string,
@@ -55,6 +47,14 @@ func NewUserUninitialized(
 		phoneNumber,
 		UninitializedCreatedAt,
 	)
+}
+
+func NewUserWithUUID(fullName string, phoneNumber *string) User {
+	return User{
+		ID:          uuid.New(),
+		FullName:    fullName,
+		PhoneNumber: phoneNumber,
+	}
 }
 
 func (u *User) Validate() error {
