@@ -23,6 +23,42 @@ func NewStatistics(
 	}
 }
 
+func CreateStatistics(tasks []Task) Statistics {
+	tasksCreated := len(tasks)
+	if tasksCreated == 0 {
+		return NewStatistics(0, 0, nil, nil)
+	}
+
+	tasksCompleted := 0
+	var totalDuration time.Duration
+
+	for _, task := range tasks {
+		if task.Completed {
+			tasksCompleted++
+		}
+
+		completionDuration := task.CompletionDuration()
+		if completionDuration != nil {
+			totalDuration += *completionDuration
+		}
+	}
+
+	tasksCompletedRate := float64(tasksCompleted) / float64(tasksCreated) * 100
+
+	var averageCompletionTime *time.Duration
+	if tasksCompleted > 0 {
+		average := totalDuration / time.Duration(tasksCompleted)
+		averageCompletionTime = &average
+	}
+
+	return NewStatistics(
+		tasksCreated,
+		tasksCompleted,
+		&tasksCompletedRate,
+		averageCompletionTime,
+	)
+}
+
 func (t *Task) CompletionDuration() *time.Duration {
 	if !t.Completed {
 		return nil
