@@ -13,6 +13,9 @@ import (
 	core_pgx_pool "github.com/darya-kznv/todo-service/internal/core/repository/postgres/pool/pgx"
 	core_http_middleware "github.com/darya-kznv/todo-service/internal/core/transport/http/middleware"
 	core_http_server "github.com/darya-kznv/todo-service/internal/core/transport/http/server"
+	statistics_postgres_repository "github.com/darya-kznv/todo-service/internal/features/statistics/repository/postgres"
+	statistics_service "github.com/darya-kznv/todo-service/internal/features/statistics/service"
+	statistics_transport_http "github.com/darya-kznv/todo-service/internal/features/statistics/transport/http"
 	tasks_postgres_repository "github.com/darya-kznv/todo-service/internal/features/tasks/repository/postgres"
 	tasks_service "github.com/darya-kznv/todo-service/internal/features/tasks/service"
 	tasks_transport_http "github.com/darya-kznv/todo-service/internal/features/tasks/transport/http"
@@ -50,6 +53,7 @@ func main() {
 
 	usersTransportHTTP := initUsers(pool, logger)
 	tasksTransportHTTP := initTasks(pool, logger)
+	statisticsTransportHTTP := initStatistics(pool, logger)
 
 	logger.Debug("initializing HTTP server")
 	httpServer := core_http_server.NewHTTPServer(
@@ -64,6 +68,7 @@ func main() {
 	apiVersionRouter := core_http_server.NewAPIVersionRouter(core_http_server.ApiVersion1)
 	apiVersionRouter.RegisterRoutes(usersTransportHTTP.Routes()...)
 	apiVersionRouter.RegisterRoutes(tasksTransportHTTP.Routes()...)
+	apiVersionRouter.RegisterRoutes(statisticsTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)
 
@@ -94,4 +99,16 @@ func initTasks(
 	service := tasks_service.NewTasksService(repo)
 
 	return tasks_transport_http.NewTasksHTTPHandler(service)
+}
+
+func initStatistics(
+	pool *core_pgx_pool.Pool,
+	logger *core_logger.Logger,
+) *statistics_transport_http.StatisticsHTTPHandler {
+	logger.Debug("initializing feature", zap.String("feature", "statistics"))
+
+	repo := statistics_postgres_repository.NewStatisticsRepository(pool)
+	service := statistics_service.NewStatisticsService(repo)
+
+	return statistics_transport_http.NewStatisticsHTTPHandler(service)
 }
