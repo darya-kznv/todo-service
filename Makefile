@@ -69,3 +69,12 @@ todoservice-run:
 	go mod tidy && \
 	go run ${PROJECT_ROOT}/cmd/todoservice/main.go
 
+todoservice-deploy:
+	@docker compose up -d --build todoservice
+
+todoservice-undeploy:
+	@docker compose stop todoservice
+
+ps:
+	@docker compose ps
+
