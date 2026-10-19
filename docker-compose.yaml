@@ -1,11 +1,11 @@
 services:
   todoservice:
     build:
-      context: ${PROJECT_ROOT}
-      dockerfile: ${PROJECT_ROOT}/cmd/todoservice/Dockerfile
+      context: .
+      dockerfile: cmd/todoservice/Dockerfile
     container_name: todoservice
     env_file:
-      - ${PROJECT_ROOT}/.env
+      - ./.env
     environment:
       - HTTP_ADDR=:5050
       - HTTP_SHUTDOWN_TIMEOUT=${HTTP_SHUTDOWN_TIMEOUT}
@@ -18,9 +18,12 @@ services:
       - LOGGER_FOLDER=/app/out/logs
       - TIME_ZONE=${TIME_ZONE}
     volumes:
-      - ${PROJECT_ROOT}/out/logs:/app/out/logs
+      - ./out/logs:/app/out/logs
     ports:
       - "5050:5050"
+    depends_on:
+      todoservice-postgres:
+        condition: service_healthy
     restart: always
 
   todoservice-postgres:
@@ -31,13 +34,22 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
     volumes:
-      - ${PROJECT_ROOT}/out/pgdata:/var/lib/postgresql
+      - ./out/pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
     restart: always
 
   todoservice-postgres-migrate:
     image: migrate/migrate:v4.19.1
     volumes:
-      - ${PROJECT_ROOT}/migrations:/migrations
+      - ./migrations:/migrations
+    depends_on:
+      todoservice-postgres:
+        condition: service_healthy
 
   port-forwarder:
     image: alpine/socat:1.8.0.3
