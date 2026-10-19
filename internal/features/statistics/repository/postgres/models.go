@@ -4,39 +4,28 @@ import (
 	"time"
 
 	"github.com/darya-kznv/todo-service/internal/core/domain"
-	"github.com/google/uuid"
 )
 
-type TaskModel struct {
-	ID           uuid.UUID
-	Version      int
-	Title        string
-	Description  *string
-	Completed    bool
-	CompletedAt  *time.Time
-	CreatedAt    time.Time
-	AuthorUserID uuid.UUID
+type StatisticsModel struct {
+	TasksCreated                int64
+	TasksCompleted              int64
+	TasksCompletedRate          *float64
+	AverageCompletionTimeSecond *float64
 }
 
-func taskDomainFromModel(task TaskModel) domain.Task {
-	return domain.NewTask(
-		task.ID,
-		task.Version,
-		task.Title,
-		task.Description,
-		task.Completed,
-		task.CompletedAt,
-		task.CreatedAt,
-		task.AuthorUserID,
-	)
-}
-
-func taskDomainsFromModels(tasks []TaskModel) []domain.Task {
-	taskDomains := make([]domain.Task, len(tasks))
-
-	for i, task := range tasks {
-		taskDomains[i] = taskDomainFromModel(task)
+func statisticsDomainFromModel(statistics StatisticsModel) domain.Statistics {
+	var averageCompletionTime *time.Duration
+	if statistics.AverageCompletionTimeSecond != nil {
+		duration := time.Duration(
+			*statistics.AverageCompletionTimeSecond * float64(time.Second),
+		)
+		averageCompletionTime = &duration
 	}
 
-	return taskDomains
+	return domain.NewStatistics(
+		int(statistics.TasksCreated),
+		int(statistics.TasksCompleted),
+		statistics.TasksCompletedRate,
+		averageCompletionTime,
+	)
 }

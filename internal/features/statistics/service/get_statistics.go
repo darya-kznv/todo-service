@@ -25,12 +25,10 @@ func (s *StatisticsService) GetStatistics(
 		}
 	}
 
-	tasks, err := s.statisticsRepository.GetTasks(ctx, userID, from, to)
+	statistics, err := s.statisticsRepository.GetStatistics(ctx, userID, from, to)
 	if err != nil {
-		return domain.Statistics{}, fmt.Errorf("get tasks from repository: %w", err)
+		return domain.Statistics{}, fmt.Errorf("get statistics from repository: %w", err)
 	}
-
-	statistics := domain.CreateStatistics(tasks)
 
 	return statistics, nil
 }

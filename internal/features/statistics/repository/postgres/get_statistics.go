@@ -10,18 +10,28 @@ import (
 	"github.com/google/uuid"
 )
 
-func (r *StatisticsRepository) GetTasks(
+func (r *StatisticsRepository) GetStatistics(
 	ctx context.Context,
 	userID *uuid.UUID,
 	from *time.Time,
 	to *time.Time,
-) ([]domain.Task, error) {
+) (domain.Statistics, error) {
 	ctx, cancel := context.WithTimeout(ctx, r.pool.OpTimeout())
 	defer cancel()
 
 	var queryBuilder strings.Builder
 	queryBuilder.WriteString(`
-	SELECT id, version, title, description, completed, created_at, completed_at, author_user_id
+	SELECT
+		COUNT(*),
+		COUNT(*) FILTER (WHERE completed),
+		(
+			COUNT(*) FILTER (WHERE completed) * 100.0
+			/ NULLIF(COUNT(*), 0)
+		)::DOUBLE PRECISION,
+		(
+			AVG(EXTRACT(EPOCH FROM completed_at - created_at))
+			FILTER (WHERE completed AND completed_at IS NOT NULL)
+		)::DOUBLE PRECISION
 	FROM todoservice.tasks`)
 
 	args := make([]any, 0, 3)
@@ -49,37 +59,17 @@ func (r *StatisticsRepository) GetTasks(
 
 	queryBuilder.WriteString(";")
 
-	rows, err := r.pool.Query(ctx, queryBuilder.String(), args...)
+	var statisticsModel StatisticsModel
+
+	err := r.pool.QueryRow(ctx, queryBuilder.String(), args...).Scan(
+		&statisticsModel.TasksCreated,
+		&statisticsModel.TasksCompleted,
+		&statisticsModel.TasksCompletedRate,
+		&statisticsModel.AverageCompletionTimeSecond,
+	)
 	if err != nil {
-		return nil, fmt.Errorf("select tasks for statistics: %w", err)
-	}
-	defer rows.Close()
-
-	var taskModels []TaskModel
-
-	for rows.Next() {
-		var taskModel TaskModel
-
-		err := rows.Scan(
-			&taskModel.ID,
-			&taskModel.Version,
-			&taskModel.Title,
-			&taskModel.Description,
-			&taskModel.Completed,
-			&taskModel.CreatedAt,
-			&taskModel.CompletedAt,
-			&taskModel.AuthorUserID,
-		)
-		if err != nil {
-			return nil, fmt.Errorf("scan tasks for statistics: %w", err)
-		}
-
-		taskModels = append(taskModels, taskModel)
+		return domain.Statistics{}, fmt.Errorf("scan statistics: %w", err)
 	}
 
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("next task rows for statistics: %w", err)
-	}
-
-	return taskDomainsFromModels(taskModels), nil
+	return statisticsDomainFromModel(statisticsModel), nil
 }
