@@ -52,7 +52,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Статистика задач",
                         "schema": {
-                            "$ref": "#/definitions/statistics_transport_http.GetStatisticsResponse"
+                            "$ref": "#/definitions/internal_features_statistics_transport_http.GetStatisticsResponse"
                         }
                     },
                     "400": {
@@ -107,7 +107,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/tasks_transport_http.TaskDTOResponse"
+                                "$ref": "#/definitions/internal_features_tasks_transport_http.TaskDTOResponse"
                             }
                         }
                     },
@@ -144,7 +144,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks_transport_http.CreateTaskRequest"
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.CreateTaskRequest"
                         }
                     }
                 ],
@@ -152,7 +152,7 @@ const docTemplate = `{
                     "201": {
                         "description": "Созданная задача",
                         "schema": {
-                            "$ref": "#/definitions/tasks_transport_http.CreateTaskResponse"
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.CreateTaskResponse"
                         }
                     },
                     "400": {
@@ -200,7 +200,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Найденная задача",
                         "schema": {
-                            "$ref": "#/definitions/tasks_transport_http.GetTaskResponse"
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.GetTaskResponse"
                         }
                     },
                     "400": {
@@ -290,7 +290,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/tasks_transport_http.PatchTaskRequest"
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.PatchTaskRequest"
                         }
                     }
                 ],
@@ -298,7 +298,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Обновлённая задача",
                         "schema": {
-                            "$ref": "#/definitions/tasks_transport_http.PatchTaskResponse"
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.PatchTaskResponse"
                         }
                     },
                     "400": {
@@ -358,7 +358,7 @@ const docTemplate = `{
                         "schema": {
                             "type": "array",
                             "items": {
-                                "$ref": "#/definitions/users_transport_http.UserDTOResponse"
+                                "$ref": "#/definitions/internal_features_users_transport_http.UserDTOResponse"
                             }
                         }
                     },
@@ -395,15 +395,15 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/users_transport_http.CreateUserRequest"
+                            "$ref": "#/definitions/internal_features_users_transport_http.CreateUserRequest"
                         }
                     }
                 ],
                 "responses": {
                     "201": {
-                        "description": "Созданный пользователь",
+                        "description": "Успешно созданный пользователь",
                         "schema": {
-                            "$ref": "#/definitions/users_transport_http.CreateUserResponse"
+                            "$ref": "#/definitions/internal_features_users_transport_http.CreateUserResponse"
                         }
                     },
                     "400": {
@@ -445,7 +445,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Найденный пользователь",
                         "schema": {
-                            "$ref": "#/definitions/users_transport_http.GetUserResponse"
+                            "$ref": "#/definitions/internal_features_users_transport_http.GetUserResponse"
                         }
                     },
                     "400": {
@@ -535,7 +535,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/users_transport_http.PatchUserRequest"
+                            "$ref": "#/definitions/internal_features_users_transport_http.PatchUserRequest"
                         }
                     }
                 ],
@@ -543,7 +543,7 @@ const docTemplate = `{
                     "200": {
                         "description": "Обновлённый пользователь",
                         "schema": {
-                            "$ref": "#/definitions/users_transport_http.PatchUserResponse"
+                            "$ref": "#/definitions/internal_features_users_transport_http.PatchUserResponse"
                         }
                     },
                     "400": {
@@ -588,7 +588,7 @@ const docTemplate = `{
                 }
             }
         },
-        "statistics_transport_http.GetStatisticsResponse": {
+        "internal_features_statistics_transport_http.GetStatisticsResponse": {
             "type": "object",
             "properties": {
                 "tasks_average_completion_time": {
@@ -609,7 +609,7 @@ const docTemplate = `{
                 }
             }
         },
-        "tasks_transport_http.CreateTaskRequest": {
+        "internal_features_tasks_transport_http.CreateTaskRequest": {
             "type": "object",
             "required": [
                 "author_user_id",
@@ -634,7 +634,7 @@ const docTemplate = `{
                 }
             }
         },
-        "tasks_transport_http.CreateTaskResponse": {
+        "internal_features_tasks_transport_http.CreateTaskResponse": {
             "type": "object",
             "properties": {
                 "author_user_id": {
@@ -671,7 +671,7 @@ const docTemplate = `{
                 }
             }
         },
-        "tasks_transport_http.GetTaskResponse": {
+        "internal_features_tasks_transport_http.GetTaskResponse": {
             "type": "object",
             "properties": {
                 "author_user_id": {
@@ -708,7 +708,7 @@ const docTemplate = `{
                 }
             }
         },
-        "tasks_transport_http.PatchTaskRequest": {
+        "internal_features_tasks_transport_http.PatchTaskRequest": {
             "type": "object",
             "properties": {
                 "completed": {
@@ -725,7 +725,7 @@ const docTemplate = `{
                 }
             }
         },
-        "tasks_transport_http.PatchTaskResponse": {
+        "internal_features_tasks_transport_http.PatchTaskResponse": {
             "type": "object",
             "properties": {
                 "author_user_id": {
@@ -762,7 +762,7 @@ const docTemplate = `{
                 }
             }
         },
-        "tasks_transport_http.TaskDTOResponse": {
+        "internal_features_tasks_transport_http.TaskDTOResponse": {
             "type": "object",
             "properties": {
                 "author_user_id": {
@@ -799,7 +799,7 @@ const docTemplate = `{
                 }
             }
         },
-        "users_transport_http.CreateUserRequest": {
+        "internal_features_users_transport_http.CreateUserRequest": {
             "type": "object",
             "required": [
                 "full_name"
@@ -819,7 +819,7 @@ const docTemplate = `{
                 }
             }
         },
-        "users_transport_http.CreateUserResponse": {
+        "internal_features_users_transport_http.CreateUserResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -844,7 +844,7 @@ const docTemplate = `{
                 }
             }
         },
-        "users_transport_http.GetUserResponse": {
+        "internal_features_users_transport_http.GetUserResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -869,7 +869,7 @@ const docTemplate = `{
                 }
             }
         },
-        "users_transport_http.PatchUserRequest": {
+        "internal_features_users_transport_http.PatchUserRequest": {
             "type": "object",
             "properties": {
                 "full_name": {
@@ -882,7 +882,7 @@ const docTemplate = `{
                 }
             }
         },
-        "users_transport_http.PatchUserResponse": {
+        "internal_features_users_transport_http.PatchUserResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
@@ -907,7 +907,7 @@ const docTemplate = `{
                 }
             }
         },
-        "users_transport_http.UserDTOResponse": {
+        "internal_features_users_transport_http.UserDTOResponse": {
             "type": "object",
             "properties": {
                 "created_at": {
