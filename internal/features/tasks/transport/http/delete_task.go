@@ -14,9 +14,9 @@ import (
 // @Tags tasks
 // @Param id path string true "ID задачи" Format(uuid)
 // @Success 204 "Задача удалена"
-// @Failure 400 {object} core_http_response.ErrorResponse "Некорректный идентификатор"
-// @Failure 404 {object} core_http_response.ErrorResponse "Задача не найдена"
-// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 404 {object} core_http_response.ErrorResponse "Not found"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
 // @Router /tasks/{id} [delete]
 func (h *TasksHTTPHandler) DeleteTask(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

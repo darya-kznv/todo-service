@@ -19,8 +19,8 @@ type GetUsersResponse []UserDTOResponse
 // @Param limit query int false "Максимальное количество записей"
 // @Param offset query int false "Смещение"
 // @Success 200 {array} UserDTOResponse "Список пользователей"
-// @Failure 400 {object} core_http_response.ErrorResponse "Некорректные параметры запроса"
-// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
 // @Router /users [get]
 func (h *UsersHTTPHandler) GetUsers(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

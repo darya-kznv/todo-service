@@ -56,13 +56,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Некорректные параметры запроса",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -112,13 +112,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Некорректные параметры запроса",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -156,19 +156,19 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Некорректный запрос",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Автор задачи не найден",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -204,19 +204,19 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Некорректный идентификатор",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Задача не найдена",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -244,19 +244,19 @@ const docTemplate = `{
                         "description": "Задача удалена"
                     },
                     "400": {
-                        "description": "Некорректный идентификатор",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Задача не найдена",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -302,25 +302,25 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Некорректный запрос",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Задача не найдена",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "409": {
-                        "description": "Конфликт версий",
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -363,13 +363,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Некорректные параметры запроса",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -407,13 +407,13 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Некорректный запрос",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -449,19 +449,19 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Некорректный идентификатор",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Пользователь не найден",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -489,19 +489,19 @@ const docTemplate = `{
                         "description": "Пользователь удалён"
                     },
                     "400": {
-                        "description": "Некорректный идентификатор",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Пользователь не найден",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
@@ -547,25 +547,25 @@ const docTemplate = `{
                         }
                     },
                     "400": {
-                        "description": "Некорректный запрос",
+                        "description": "Bad request",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "404": {
-                        "description": "Пользователь не найден",
+                        "description": "Not found",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "409": {
-                        "description": "Конфликт версий",
+                        "description": "Conflict",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }
                     },
                     "500": {
-                        "description": "Внутренняя ошибка сервера",
+                        "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
                         }

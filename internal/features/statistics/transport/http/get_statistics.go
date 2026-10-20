@@ -33,8 +33,8 @@ type GetStatisticsResponse struct {
 // @Param from query string false "Начало периода" Format(date)
 // @Param to query string false "Конец периода" Format(date)
 // @Success 200 {object} GetStatisticsResponse "Статистика задач"
-// @Failure 400 {object} core_http_response.ErrorResponse "Некорректные параметры запроса"
-// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
 // @Router /statistics [get]
 func (h *StatisticsHTTPHandler) GetStatistics(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

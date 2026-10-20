@@ -27,9 +27,9 @@ type CreateTaskResponse TaskDTOResponse
 // @Produce json
 // @Param request body CreateTaskRequest true "Тело запроса"
 // @Success 201 {object} CreateTaskResponse "Созданная задача"
-// @Failure 400 {object} core_http_response.ErrorResponse "Некорректный запрос"
-// @Failure 404 {object} core_http_response.ErrorResponse "Автор задачи не найден"
-// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 404 {object} core_http_response.ErrorResponse "Not found"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
 // @Router /tasks [post]
 func (h *TasksHTTPHandler) CreateTask(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

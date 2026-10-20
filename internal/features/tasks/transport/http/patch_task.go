@@ -61,10 +61,10 @@ type PatchTaskResponse TaskDTOResponse
 // @Param id path string true "ID задачи" Format(uuid)
 // @Param request body PatchTaskRequest true "Изменяемые поля"
 // @Success 200 {object} PatchTaskResponse "Обновлённая задача"
-// @Failure 400 {object} core_http_response.ErrorResponse "Некорректный запрос"
-// @Failure 404 {object} core_http_response.ErrorResponse "Задача не найдена"
-// @Failure 409 {object} core_http_response.ErrorResponse "Конфликт версий"
-// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 404 {object} core_http_response.ErrorResponse "Not found"
+// @Failure 409 {object} core_http_response.ErrorResponse "Conflict"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
 // @Router /tasks/{id} [patch]
 func (h *TasksHTTPHandler) PatchTask(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

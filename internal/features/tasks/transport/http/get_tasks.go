@@ -22,8 +22,8 @@ type GetTasksResponse []TaskDTOResponse
 // @Param offset query int false "Смещение"
 // @Param user_id query string false "ID автора" Format(uuid)
 // @Success 200 {array} TaskDTOResponse "Список задач"
-// @Failure 400 {object} core_http_response.ErrorResponse "Некорректные параметры запроса"
-// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
 // @Router /tasks [get]
 func (h *TasksHTTPHandler) GetTasks(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
