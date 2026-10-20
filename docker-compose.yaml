@@ -21,7 +21,6 @@ services:
     environment:
       - HTTP_ADDR=:5050
       - HTTP_SHUTDOWN_TIMEOUT=${HTTP_SHUTDOWN_TIMEOUT}
-      - HTTP_ALLOWED_ORIGINS=${HTTP_ALLOWED_ORIGINS:-http://localhost:5050,http://127.0.0.1:5050}
       - POSTGRES_HOST=todoservice-postgres
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
