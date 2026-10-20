@@ -93,9 +93,9 @@ func (h *HTTPResponseHandler) errorResponse(
 	err error,
 	msg string,
 ) {
-	response := map[string]string{
-		"message": msg,
-		"error":   err.Error(),
+	response := ErrorResponse{
+		Message: msg,
+		Error:   err.Error(),
 	}
 
 	h.JSONResponse(

@@ -10,6 +10,17 @@ import (
 
 type GetUserResponse UserDTOResponse
 
+// GetUser godoc
+// @Summary Получить пользователя
+// @Description Получить пользователя по идентификатору
+// @Tags users
+// @Produce json
+// @Param id path string true "ID пользователя" Format(uuid)
+// @Success 200 {object} GetUserResponse "Найденный пользователь"
+// @Failure 400 {object} core_http_response.ErrorResponse "Некорректный идентификатор"
+// @Failure 404 {object} core_http_response.ErrorResponse "Пользователь не найден"
+// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Router /users/{id} [get]
 func (h *UsersHTTPHandler) GetUser(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromContext(ctx)

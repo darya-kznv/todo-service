@@ -10,6 +10,17 @@ import (
 
 type GetTaskResponse TaskDTOResponse
 
+// GetTask godoc
+// @Summary Получить задачу
+// @Description Получить задачу по идентификатору
+// @Tags tasks
+// @Produce json
+// @Param id path string true "ID задачи" Format(uuid)
+// @Success 200 {object} GetTaskResponse "Найденная задача"
+// @Failure 400 {object} core_http_response.ErrorResponse "Некорректный идентификатор"
+// @Failure 404 {object} core_http_response.ErrorResponse "Задача не найдена"
+// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Router /tasks/{id} [get]
 func (h *TasksHTTPHandler) GetTask(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromContext(ctx)

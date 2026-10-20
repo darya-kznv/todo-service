@@ -8,6 +8,7 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/darya-kznv/todo-service/docs"
 	core_config "github.com/darya-kznv/todo-service/internal/core/config"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	core_pgx_pool "github.com/darya-kznv/todo-service/internal/core/repository/postgres/pool/pgx"
@@ -25,6 +26,11 @@ import (
 	"go.uber.org/zap"
 )
 
+// @title 		Golang Todo API
+// @version 	1.0
+// @description Todo Application REST API
+// @host 		127.0.0.1:5050
+// @BasePath 	/api/v1
 func main() {
 	config := core_config.NewConfigMust()
 	time.Local = config.TimeZone
@@ -56,9 +62,11 @@ func main() {
 	statisticsTransportHTTP := initStatistics(pool, logger)
 
 	logger.Debug("initializing HTTP server")
+	httpConfig := core_http_server.NewConfigMust()
 	httpServer := core_http_server.NewHTTPServer(
-		core_http_server.NewConfigMust(),
+		httpConfig,
 		logger,
+		core_http_middleware.CORS(httpConfig.AllowedOrigins),
 		core_http_middleware.RequestID(),
 		core_http_middleware.Logger(logger),
 		core_http_middleware.Trace(),
@@ -71,6 +79,7 @@ func main() {
 	apiVersionRouter.RegisterRoutes(statisticsTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)
+	httpServer.RegisterSwagger()
 
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Error("HTTP server run error", zap.Error(err))

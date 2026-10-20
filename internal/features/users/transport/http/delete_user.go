@@ -8,6 +8,16 @@ import (
 	core_http_response "github.com/darya-kznv/todo-service/internal/core/transport/http/response"
 )
 
+// DeleteUser godoc
+// @Summary Удалить пользователя
+// @Description Удалить пользователя по идентификатору
+// @Tags users
+// @Param id path string true "ID пользователя" Format(uuid)
+// @Success 204 "Пользователь удалён"
+// @Failure 400 {object} core_http_response.ErrorResponse "Некорректный идентификатор"
+// @Failure 404 {object} core_http_response.ErrorResponse "Пользователь не найден"
+// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Router /users/{id} [delete]
 func (h *UsersHTTPHandler) DeleteUser(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromContext(ctx)

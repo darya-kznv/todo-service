@@ -13,9 +13,9 @@ import (
 )
 
 type PatchTaskRequest struct {
-	Title       core_http_types.Nullable[string] `json:"title"`
-	Description core_http_types.Nullable[string] `json:"description"`
-	Completed   core_http_types.Nullable[bool]   `json:"completed"`
+	Title       core_http_types.Nullable[string] `json:"title" swaggertype:"string" example:"Publish API documentation"`
+	Description core_http_types.Nullable[string] `json:"description" swaggertype:"string" example:"Review and publish Swagger UI"`
+	Completed   core_http_types.Nullable[bool]   `json:"completed" swaggertype:"boolean" example:"true"`
 }
 
 func (r *PatchTaskRequest) Validate() error {
@@ -52,6 +52,20 @@ func (r *PatchTaskRequest) Validate() error {
 
 type PatchTaskResponse TaskDTOResponse
 
+// PatchTask godoc
+// @Summary Обновить задачу
+// @Description Частично обновить задачу по идентификатору
+// @Tags tasks
+// @Accept json
+// @Produce json
+// @Param id path string true "ID задачи" Format(uuid)
+// @Param request body PatchTaskRequest true "Изменяемые поля"
+// @Success 200 {object} PatchTaskResponse "Обновлённая задача"
+// @Failure 400 {object} core_http_response.ErrorResponse "Некорректный запрос"
+// @Failure 404 {object} core_http_response.ErrorResponse "Задача не найдена"
+// @Failure 409 {object} core_http_response.ErrorResponse "Конфликт версий"
+// @Failure 500 {object} core_http_response.ErrorResponse "Внутренняя ошибка сервера"
+// @Router /tasks/{id} [patch]
 func (h *TasksHTTPHandler) PatchTask(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromContext(ctx)

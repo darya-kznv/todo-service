@@ -1,4 +1,16 @@
 services:
+  swagger:
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM golang:1.24.1-alpine
+        RUN apk add --no-cache git
+        RUN go install github.com/swaggo/swag/cmd/swag@v1.16.6
+        WORKDIR /code
+        ENTRYPOINT ["swag"]
+    volumes:
+      - .:/code
+
   todoservice:
     build:
       context: .
@@ -9,6 +21,7 @@ services:
     environment:
       - HTTP_ADDR=:5050
       - HTTP_SHUTDOWN_TIMEOUT=${HTTP_SHUTDOWN_TIMEOUT}
+      - HTTP_ALLOWED_ORIGINS=${HTTP_ALLOWED_ORIGINS:-http://localhost:5050,http://127.0.0.1:5050}
       - POSTGRES_HOST=todoservice-postgres
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}

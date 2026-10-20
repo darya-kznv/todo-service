@@ -78,3 +78,11 @@ todoservice-undeploy:
 ps:
 	@docker compose ps
 
+swagger:
+	@docker compose run --rm swagger \
+		init \
+		--generalInfo cmd/todoservice/main.go \
+		--output docs \
+		--parseInternal \
+		--parseDependency
+

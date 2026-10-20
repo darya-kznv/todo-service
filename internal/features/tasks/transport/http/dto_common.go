@@ -8,14 +8,14 @@ import (
 )
 
 type TaskDTOResponse struct {
-	ID           uuid.UUID  `json:"id"`
-	Version      int        `json:"version"`
-	Title        string     `json:"title"`
-	Description  *string    `json:"description"`
-	Completed    bool       `json:"completed"`
-	CompletedAt  *time.Time `json:"completed_at"`
-	CreatedAt    time.Time  `json:"created_at"`
-	AuthorUserID uuid.UUID  `json:"author_user_id"`
+	ID           uuid.UUID  `json:"id" example:"550e8400-e29b-41d4-a716-446655440001"`
+	Version      int        `json:"version" example:"1"`
+	Title        string     `json:"title" example:"Write API documentation"`
+	Description  *string    `json:"description" example:"Document every endpoint"`
+	Completed    bool       `json:"completed" example:"false"`
+	CompletedAt  *time.Time `json:"completed_at" example:"2026-01-15T11:30:00Z"`
+	CreatedAt    time.Time  `json:"created_at" example:"2026-01-15T10:30:00Z"`
+	AuthorUserID uuid.UUID  `json:"author_user_id" example:"550e8400-e29b-41d4-a716-446655440000"`
 }
 
 func taskDTOFromDomain(task domain.Task) TaskDTOResponse {
