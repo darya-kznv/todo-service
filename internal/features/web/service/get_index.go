@@ -15,7 +15,7 @@ func (s *WebService) GetIndex() (domain.File, error) {
 	}
 
 	filePath := filepath.Join(projectRoot, "public", "index.html")
-	file, err := s.wepRepository.ReadFile(filePath)
+	file, err := s.webRepository.ReadFile(filePath)
 	if err != nil {
 		return domain.File{}, fmt.Errorf("get index page from repository: %w", err)
 	}

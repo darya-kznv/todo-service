@@ -7,13 +7,13 @@ type WebRepository interface {
 }
 
 type WebService struct {
-	wepRepository WebRepository
+	webRepository WebRepository
 }
 
 func NewWebService(
 	webRepository WebRepository,
 ) *WebService {
 	return &WebService{
-		wepRepository: webRepository,
+		webRepository: webRepository,
 	}
 }

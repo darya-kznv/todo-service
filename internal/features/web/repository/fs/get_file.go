@@ -1,6 +1,7 @@
 package web_fs_repository
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -11,7 +12,7 @@ import (
 func (r *WebRepository) ReadFile(path string) (domain.File, error) {
 	buffer, err := os.ReadFile(path)
 	if err != nil {
-		if os.IsNotExist(err) {
+		if errors.Is(err, os.ErrNotExist) {
 			return domain.File{}, fmt.Errorf(
 				"read web file %q: %w",
 				path,
