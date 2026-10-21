@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/darya-kznv/todo-service/internal/core/domain"
 	core_errors "github.com/darya-kznv/todo-service/internal/core/errors"
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	"go.uber.org/zap"
@@ -36,6 +37,15 @@ func (h *HTTPResponseHandler) JSONResponse(
 		h.log.Error("write HTTP response", zap.Error(err))
 	}
 
+}
+
+func (h *HTTPResponseHandler) HTMLResponse(file domain.File) {
+	h.rw.WriteHeader(http.StatusOK)
+
+	h.rw.Header().Set("Content-Type", "text/html; charset=utf-8")
+	if _, err := h.rw.Write(file.Buffer()); err != nil {
+		h.log.Error("write HTML HTTP response", zap.Error(err))
+	}
 }
 
 func (h *HTTPResponseHandler) NoContentResponse() {
