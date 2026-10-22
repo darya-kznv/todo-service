@@ -17,8 +17,8 @@ import (
 var patchPhoneRegex = regexp.MustCompile(`^\+[0-9]+$`)
 
 type PatchUserRequest struct {
-	FullName    core_http_types.Nullable[string] `json:"full_name"`
-	PhoneNumber core_http_types.Nullable[string] `json:"phone_number"`
+	FullName    core_http_types.Nullable[string] `json:"full_name" swaggertype:"string" example:"Maxim Maximovich"`
+	PhoneNumber core_http_types.Nullable[string] `json:"phone_number" swaggertype:"string" example:"+71112223344"`
 }
 
 func (r *PatchUserRequest) Validate() error {
@@ -67,6 +67,20 @@ func (r *PatchUserRequest) Validate() error {
 
 type PatchUserResponse UserDTOResponse
 
+// PatchUser godoc
+// @Summary Обновить пользователя
+// @Description Частично обновить пользователя по идентификатору
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path string true "ID пользователя" Format(uuid)
+// @Param request body PatchUserRequest true "Изменяемые поля"
+// @Success 200 {object} PatchUserResponse "Обновлённый пользователь"
+// @Failure 400 {object} core_http_response.ErrorResponse "Bad request"
+// @Failure 404 {object} core_http_response.ErrorResponse "Not found"
+// @Failure 409 {object} core_http_response.ErrorResponse "Conflict"
+// @Failure 500 {object} core_http_response.ErrorResponse "Internal server error"
+// @Router /users/{id} [patch]
 func (h *UsersHTTPHandler) PatchUser(rw http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	log := core_logger.FromContext(ctx)

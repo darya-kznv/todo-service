@@ -8,6 +8,8 @@ import (
 
 	core_logger "github.com/darya-kznv/todo-service/internal/core/logger"
 	core_http_middleware "github.com/darya-kznv/todo-service/internal/core/transport/http/middleware"
+	httpSwagger "github.com/swaggo/http-swagger/v2"
+	"github.com/swaggo/swag"
 	"go.uber.org/zap"
 )
 
@@ -17,6 +19,28 @@ type HTTPServer struct {
 	log    *core_logger.Logger
 
 	middleware []core_http_middleware.Middleware
+}
+
+func (s *HTTPServer) RegisterSwagger() {
+	s.mux.Handle(
+		"GET /swagger/",
+		httpSwagger.Handler(
+			httpSwagger.URL("/swagger/doc.json"),
+			httpSwagger.DefaultModelsExpandDepth(-1),
+		),
+	)
+
+	s.mux.HandleFunc("GET /swagger/doc.json", func(w http.ResponseWriter, _ *http.Request) {
+		document, err := swag.ReadDoc()
+		if err != nil {
+			http.Error(w, "failed to read Swagger document", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte(document))
+	})
 }
 
 func NewHTTPServer(

@@ -1,0 +1,930 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Todo Application REST API",
+        "title": "Golang Todo API",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "127.0.0.1:5050",
+    "basePath": "/api/v1",
+    "paths": {
+        "/statistics": {
+            "get": {
+                "description": "Получить статистику задач с фильтрацией по автору и периоду",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "statistics"
+                ],
+                "summary": "Получить статистику",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID автора",
+                        "name": "user_id",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Начало периода",
+                        "name": "from",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "date",
+                        "description": "Конец периода",
+                        "name": "to",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статистика задач",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_statistics_transport_http.GetStatisticsResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks": {
+            "get": {
+                "description": "Получить список задач с фильтрацией и пагинацией",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Получить задачи",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Максимальное количество записей",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Смещение",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID автора",
+                        "name": "user_id",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список задач",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_features_tasks_transport_http.TaskDTOResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Создать новую задачу",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Создать задачу",
+                "parameters": [
+                    {
+                        "description": "Тело запроса",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.CreateTaskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Созданная задача",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.CreateTaskResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/tasks/{id}": {
+            "get": {
+                "description": "Получить задачу по идентификатору",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Получить задачу",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID задачи",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Найденная задача",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.GetTaskResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удалить задачу по идентификатору",
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Удалить задачу",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID задачи",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Задача удалена"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Частично обновить задачу по идентификатору",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "tasks"
+                ],
+                "summary": "Обновить задачу",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID задачи",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Изменяемые поля",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.PatchTaskRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновлённая задача",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_tasks_transport_http.PatchTaskResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "description": "Получить список пользователей с пагинацией",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Получить пользователей",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Максимальное количество записей",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Смещение",
+                        "name": "offset",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список пользователей",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/internal_features_users_transport_http.UserDTOResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Создать нового пользователя в системе",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Создать пользователя",
+                "parameters": [
+                    {
+                        "description": "Тело запроса",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_users_transport_http.CreateUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Успешно созданный пользователь",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_users_transport_http.CreateUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/users/{id}": {
+            "get": {
+                "description": "Получить пользователя по идентификатору",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Получить пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Найденный пользователь",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_users_transport_http.GetUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Удалить пользователя по идентификатору",
+                "tags": [
+                    "users"
+                ],
+                "summary": "Удалить пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Пользователь удалён"
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "description": "Частично обновить пользователя по идентификатору",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "users"
+                ],
+                "summary": "Обновить пользователя",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "format": "uuid",
+                        "description": "ID пользователя",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Изменяемые поля",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_users_transport_http.PatchUserRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Обновлённый пользователь",
+                        "schema": {
+                            "$ref": "#/definitions/internal_features_users_transport_http.PatchUserResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "github_com_darya-kznv_todo-service_internal_core_transport_http_response.ErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "invalid argument"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "failed to process request"
+                }
+            }
+        },
+        "internal_features_statistics_transport_http.GetStatisticsResponse": {
+            "type": "object",
+            "properties": {
+                "tasks_average_completion_time": {
+                    "type": "string",
+                    "example": "2h30m0s"
+                },
+                "tasks_completed": {
+                    "type": "integer",
+                    "example": 8
+                },
+                "tasks_completed_rate": {
+                    "type": "number",
+                    "example": 0.8
+                },
+                "tasks_created": {
+                    "type": "integer",
+                    "example": 10
+                }
+            }
+        },
+        "internal_features_tasks_transport_http.CreateTaskRequest": {
+            "type": "object",
+            "required": [
+                "author_user_id",
+                "title"
+            ],
+            "properties": {
+                "author_user_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "description": {
+                    "type": "string",
+                    "maxLength": 1000,
+                    "minLength": 1,
+                    "example": "Document every endpoint"
+                },
+                "title": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 1,
+                    "example": "Write API documentation"
+                }
+            }
+        },
+        "internal_features_tasks_transport_http.CreateTaskResponse": {
+            "type": "object",
+            "properties": {
+                "author_user_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "completed_at": {
+                    "type": "string",
+                    "example": "2026-01-15T11:30:00Z"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-15T10:30:00Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Document every endpoint"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440001"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Write API documentation"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "internal_features_tasks_transport_http.GetTaskResponse": {
+            "type": "object",
+            "properties": {
+                "author_user_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "completed_at": {
+                    "type": "string",
+                    "example": "2026-01-15T11:30:00Z"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-15T10:30:00Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Document every endpoint"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440001"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Write API documentation"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "internal_features_tasks_transport_http.PatchTaskRequest": {
+            "type": "object",
+            "properties": {
+                "completed": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Review and publish Swagger UI"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Publish API documentation"
+                }
+            }
+        },
+        "internal_features_tasks_transport_http.PatchTaskResponse": {
+            "type": "object",
+            "properties": {
+                "author_user_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "completed_at": {
+                    "type": "string",
+                    "example": "2026-01-15T11:30:00Z"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-15T10:30:00Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Document every endpoint"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440001"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Write API documentation"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "internal_features_tasks_transport_http.TaskDTOResponse": {
+            "type": "object",
+            "properties": {
+                "author_user_id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "completed": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "completed_at": {
+                    "type": "string",
+                    "example": "2026-01-15T11:30:00Z"
+                },
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-15T10:30:00Z"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "Document every endpoint"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440001"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Write API documentation"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "internal_features_users_transport_http.CreateUserRequest": {
+            "type": "object",
+            "required": [
+                "full_name"
+            ],
+            "properties": {
+                "full_name": {
+                    "type": "string",
+                    "maxLength": 100,
+                    "minLength": 3,
+                    "example": "Ivan Ivanov"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "maxLength": 15,
+                    "minLength": 10,
+                    "example": "+79998887766"
+                }
+            }
+        },
+        "internal_features_users_transport_http.CreateUserResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-15T10:30:00Z"
+                },
+                "full_name": {
+                    "type": "string",
+                    "example": "Ivan Ivanov"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "example": "+79998887766"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "internal_features_users_transport_http.GetUserResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-15T10:30:00Z"
+                },
+                "full_name": {
+                    "type": "string",
+                    "example": "Ivan Ivanov"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "example": "+79998887766"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "internal_features_users_transport_http.PatchUserRequest": {
+            "type": "object",
+            "properties": {
+                "full_name": {
+                    "type": "string",
+                    "example": "Maxim Maximovich"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "example": "+71112223344"
+                }
+            }
+        },
+        "internal_features_users_transport_http.PatchUserResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-15T10:30:00Z"
+                },
+                "full_name": {
+                    "type": "string",
+                    "example": "Ivan Ivanov"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "example": "+79998887766"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        },
+        "internal_features_users_transport_http.UserDTOResponse": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string",
+                    "example": "2026-01-15T10:30:00Z"
+                },
+                "full_name": {
+                    "type": "string",
+                    "example": "Ivan Ivanov"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "550e8400-e29b-41d4-a716-446655440000"
+                },
+                "phone_number": {
+                    "type": "string",
+                    "example": "+79998887766"
+                },
+                "version": {
+                    "type": "integer",
+                    "example": 1
+                }
+            }
+        }
+    }
+}
