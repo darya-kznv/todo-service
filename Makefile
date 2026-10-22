@@ -4,7 +4,7 @@ export
 export PROJECT_ROOT=$(shell pwd)
 
 env-up:
-	@docker compose up -d todoservice-postgres
+	@docker compose up -d todoservice-postgres todoapp-redis
 
 env-down:
 	@docker compose down todoservice-postgres
