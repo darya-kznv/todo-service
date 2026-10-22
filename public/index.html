@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3ef">
+  <title>Todo — задачи и команда</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --color-page: #f5f3ef;
+      --color-surface: #fff;
+      --color-text: #242424;
+      --color-text-input: #282724;
+      --color-text-muted: #6d6a65;
+      --color-text-stat: #73706a;
+      --color-text-subtle: #77736f;
+      --color-text-label: #55514d;
+      --color-text-description: #696661;
+      --color-text-meta: #85817b;
+      --color-text-completed: #898680;
+      --color-text-button: #57524e;
+      --color-text-empty: #79756e;
+      --color-text-footer: #8b8781;
+      --color-border-header: #ddd9d3;
+      --color-border: #e5e1db;
+      --color-border-input: #dcd8d3;
+      --color-border-secondary: #dfdbe4;
+      --color-divider: #efede9;
+      --color-primary: #5d4ce1;
+      --color-primary-hover: #4939ca;
+      --color-primary-text: #5546c8;
+      --color-primary-soft: #f2f0fc;
+      --color-primary-soft-hover: #f5f3ff;
+      --color-primary-hover-soft: #ebe7ff;
+      --color-focus: #7668e7;
+      --color-focus-ring: #7668e724;
+      --color-notice: #ece9ff;
+      --color-notice-text: #392e93;
+      --color-error: #fff0ee;
+      --color-error-text: #ad3024;
+      --color-shadow: #24242408;
+      background: var(--color-page);
+      color: var(--color-text);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; }
+    button, input, textarea, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; }
+    .skip { position: absolute; top: -50px; left: 16px; background: var(--color-surface); padding: 8px; z-index: 10; }
+    .skip:focus { top: 8px; }
+    .shell { max-width: 1200px; margin: auto; padding: 30px 28px 80px; }
+    header { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--color-border-header); padding-bottom: 24px; }
+    .brand { display: flex; align-items: center; gap: 12px; font-weight: 800; letter-spacing: -.04em; font-size: 26px; }
+    .brand-mark { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 11px; color: var(--color-surface); background: var(--color-primary); font-size: 24px; }
+    .header-note { color: var(--color-text-muted); font-size: 14px; }
+    .hero { padding: 42px 0 28px; display: flex; align-items: end; justify-content: space-between; gap: 24px; }
+    .eyebrow { color: var(--color-primary); font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 8px 0; font-size: clamp(35px, 5vw, 56px); letter-spacing: -.055em; line-height: 1.05; }
+    .hero p { margin: 0; color: var(--color-text-muted); }
+    .stats { display: flex; gap: 10px; }
+    .stat { min-width: 105px; padding: 16px; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 16px; }
+    .stat strong { display: block; font-size: 27px; letter-spacing: -.04em; }
+    .stat span { color: var(--color-text-stat); font-size: 12px; }
+    .notice { min-height: 42px; margin: 4px 0 14px; padding: 11px 14px; border-radius: 10px; background: var(--color-notice); color: var(--color-notice-text); font-size: 14px; }
+    .notice[hidden] { display: none; }
+    .notice.error { background: var(--color-error); color: var(--color-error-text); }
+    main { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(290px, 1fr); gap: 20px; align-items: start; }
+    .panel { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 20px; box-shadow: 0 10px 35px var(--color-shadow); overflow: hidden; }
+    .panel-head { padding: 24px 24px 18px; display: flex; align-items: start; justify-content: space-between; gap: 12px; }
+    h2 { margin: 0 0 5px; font-size: 22px; letter-spacing: -.03em; }
+    .subtle { margin: 0; color: var(--color-text-subtle); font-size: 13px; }
+    .count { padding: 6px 10px; border-radius: 20px; background: var(--color-primary-soft); color: var(--color-primary-text); font-weight: 700; font-size: 12px; }
+    .form { display: grid; gap: 12px; padding: 0 24px 22px; }
+    .form-row { display: flex; gap: 10px; }
+    .field { display: grid; gap: 6px; flex: 1; min-width: 0; }
+    .field label { font-size: 12px; font-weight: 700; color: var(--color-text-label); }
+    .field input, .field textarea, .field select, .filter { width: 100%; border: 1px solid var(--color-border-input); border-radius: 10px; background: var(--color-surface); padding: 11px 12px; color: var(--color-text-input); outline: none; }
+    .field textarea { min-height: 73px; resize: vertical; }
+    .field input:focus, .field textarea:focus, .field select:focus, .filter:focus { border-color: var(--color-focus); box-shadow: 0 0 0 3px var(--color-focus-ring); }
+    .form-actions { display: flex; align-items: flex-end; gap: 8px; }
+    .primary { border: 0; border-radius: 10px; padding: 13px 16px; color: var(--color-surface); background: var(--color-primary); font-weight: 700; }
+    .primary:hover { background: var(--color-primary-hover); }
+    .secondary { border: 1px solid var(--color-border-secondary); background: var(--color-surface); border-radius: 10px; padding: 10px 13px; color: var(--color-primary-text); font-weight: 600; }
+    .secondary:hover { background: var(--color-primary-soft-hover); }
+    .filter-wrap { padding: 16px 24px; border-top: 1px solid var(--color-divider); border-bottom: 1px solid var(--color-divider); display: flex; gap: 10px; }
+    .filter-wrap .filter { min-width: 0; }
+    .list { list-style: none; margin: 0; padding: 0; }
+    .item { padding: 18px 24px; border-bottom: 1px solid var(--color-divider); display: flex; gap: 13px; align-items: start; }
+    .item:last-child { border-bottom: 0; }
+    .item-main { flex: 1; min-width: 0; }
+    .item-title { font-weight: 700; line-height: 1.35; overflow-wrap: anywhere; }
+    .item.done .item-title { text-decoration: line-through; color: var(--color-text-completed); }
+    .item-desc { margin: 5px 0 0; color: var(--color-text-description); font-size: 13px; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .meta { margin-top: 8px; font-size: 12px; color: var(--color-text-meta); }
+    .item-actions { display: flex; flex-wrap: wrap; justify-content: end; gap: 5px; }
+    .icon-btn { border: 0; border-radius: 8px; background: var(--color-page); padding: 7px 9px; color: var(--color-text-button); font-size: 12px; font-weight: 600; }
+    .icon-btn:hover { background: var(--color-primary-hover-soft); color: var(--color-primary-hover); }
+    .icon-btn.danger:hover { background: var(--color-error); color: var(--color-error-text); }
+    .check { width: 23px; height: 23px; margin: 1px 0 0; accent-color: var(--color-primary); flex: none; }
+    .empty { padding: 30px 24px; text-align: center; color: var(--color-text-empty); font-size: 14px; }
+    .side { display: grid; gap: 20px; }
+    .foot { padding-top: 25px; color: var(--color-text-footer); font-size: 12px; text-align: center; }
+    @media (max-width: 850px) { main { grid-template-columns: 1fr; } .hero { align-items: start; flex-direction: column; } }
+    @media (max-width: 550px) { .shell { padding: 18px 10px 55px; } .hero { padding-top: 30px; } .stats { width: 100%; } .stat { flex: 1; min-width: 0; } .panel-head, .item { padding-left: 16px; padding-right: 16px; } .form { padding-left: 16px; padding-right: 16px; } .form-row, .filter-wrap { flex-direction: column; } .filter-wrap { padding-left: 16px; padding-right: 16px; } .item { flex-wrap: wrap; } .item-actions { width: 100%; justify-content: start; padding-left: 35px; } }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#main">Перейти к содержимому</a>
+  <div class="shell">
+    <header>
+      <div class="brand"><span class="brand-mark" aria-hidden="true">✓</span> Todo</div>
+      <span class="header-note">Пространство для ваших планов</span>
+    </header>
+
+    <section class="hero" aria-labelledby="page-title">
+      <div>
+        <div class="eyebrow">Панель управления</div>
+        <h1 id="page-title">Всё под контролем.</h1>
+        <p>Создавайте задачи, отмечайте выполненное и работайте вместе.</p>
+      </div>
+      <div class="stats" aria-label="Сводка">
+        <div class="stat"><strong id="stat-total">—</strong><span>Всего задач</span></div>
+        <div class="stat"><strong id="stat-done">—</strong><span>Выполнено</span></div>
+        <div class="stat"><strong id="stat-users">—</strong><span>Участников</span></div>
+      </div>
+    </section>
+
+    <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+
+    <main id="main">
+      <section class="panel" aria-labelledby="tasks-heading">
+        <div class="panel-head">
+          <div><h2 id="tasks-heading">Задачи</h2><p class="subtle">От идеи до готового результата</p></div>
+          <span class="count" id="task-count">0 задач</span>
+        </div>
+        <form id="task-form" class="form">
+          <div class="field"><label for="task-title">Название задачи</label><input id="task-title" name="title" maxlength="100" placeholder="Например, подготовить презентацию" required></div>
+          <div class="field"><label for="task-description">Описание (необязательно)</label><textarea id="task-description" name="description" maxlength="1000" placeholder="Добавьте детали"></textarea></div>
+          <div class="form-row">
+            <div class="field"><label for="task-author">Автор</label><select id="task-author" name="author" required><option value="">Выберите участника</option></select></div>
+            <div class="form-actions"><button class="primary" id="task-submit" type="submit">Создать задачу</button><button class="secondary" id="task-cancel" type="button" hidden>Отмена</button></div>
+          </div>
+        </form>
+        <div class="filter-wrap">
+          <input id="task-search" class="filter" type="search" placeholder="Поиск по задачам" aria-label="Поиск по задачам">
+          <select id="task-filter" class="filter" aria-label="Фильтр задач"><option value="all">Все задачи</option><option value="open">В работе</option><option value="done">Выполнены</option></select>
+        </div>
+        <ul id="task-list" class="list" aria-label="Список задач"></ul>
+      </section>
+
+      <div class="side">
+        <section class="panel" aria-labelledby="users-heading">
+          <div class="panel-head"><div><h2 id="users-heading">Участники</h2><p class="subtle">Кому поручить следующую задачу?</p></div><span class="count" id="user-count">0</span></div>
+          <form id="user-form" class="form">
+            <div class="field"><label for="user-name">Имя и фамилия</label><input id="user-name" name="full_name" minlength="3" maxlength="100" placeholder="Иван Иванов" required></div>
+            <div class="field"><label for="user-phone">Телефон (необязательно)</label><input id="user-phone" name="phone_number" type="tel" pattern="[+][0-9]{9,14}" title="От 10 до 15 символов: плюс и цифры" placeholder="+79998887766"></div>
+            <div class="form-actions"><button class="primary" id="user-submit" type="submit">Добавить участника</button><button class="secondary" id="user-cancel" type="button" hidden>Отмена</button></div>
+          </form>
+          <ul id="user-list" class="list" aria-label="Список участников"></ul>
+        </section>
+      </div>
+    </main>
+    <div class="foot">Todo · Данные сохраняются на вашем сервере</div>
+  </div>
+
+  <script>
+    const API_BASE = '/api/v1';
+    const state = { users: [], tasks: [], editingUser: null, editingTask: null };
+    const elementById = (id) => document.getElementById(id);
+
+    async function api(path, options = {}) {
+      const response = await fetch(API_BASE + path, {
+        ...options,
+        headers: { 'Content-Type': 'application/json', ...options.headers },
+      });
+      const body = response.status === 204 ? null : await response.json().catch(() => null);
+      if (!response.ok) {
+        throw new Error(body?.error || body?.message || `Ошибка HTTP ${response.status}`);
+      }
+      return body;
+    }
+
+    function notify(message, error = false) {
+      const notice = elementById('notice');
+      notice.textContent = message;
+      notice.classList.toggle('error', error);
+      notice.hidden = false;
+    }
+
+    function clearNotice() { elementById('notice').hidden = true; }
+    function element(tag, className, text) {
+      const node = document.createElement(tag);
+      if (className) node.className = className;
+      if (text != null) node.textContent = text;
+      return node;
+    }
+    function button(label, action, id, danger = false) {
+      const node = element('button', `icon-btn${danger ? ' danger' : ''}`, label);
+      node.type = 'button';
+      node.dataset.action = action;
+      node.dataset.id = id;
+      return node;
+    }
+
+    function renderUsers() {
+      elementById('stat-users').textContent = state.users.length;
+      elementById('user-count').textContent = state.users.length;
+      const list = elementById('user-list');
+      list.replaceChildren();
+      const select = elementById('task-author');
+      const selected = select.value;
+      select.replaceChildren(new Option('Выберите участника', ''));
+      state.users.forEach((user) => {
+        select.add(new Option(user.full_name, user.id));
+        const item = element('li', 'item');
+        const main = element('div', 'item-main');
+        main.append(element('div', 'item-title', user.full_name));
+        if (user.phone_number) main.append(element('div', 'meta', user.phone_number));
+        const actions = element('div', 'item-actions');
+        actions.append(button('Изменить', 'edit-user', user.id), button('Удалить', 'delete-user', user.id, true));
+        item.append(main, actions);
+        list.append(item);
+      });
+      if (state.users.some((user) => user.id === selected)) select.value = selected;
+      if (!state.users.length) list.append(element('li', 'empty', 'Пока нет участников. Добавьте первого выше.'));
+    }
+
+    function visibleTasks() {
+      const query = elementById('task-search').value.trim().toLocaleLowerCase();
+      const filter = elementById('task-filter').value;
+      return state.tasks.filter((task) => {
+        const matchesText = `${task.title} ${task.description || ''}`.toLocaleLowerCase().includes(query);
+        const matchesStatus = filter === 'all' || (filter === 'done' ? task.completed : !task.completed);
+        return matchesText && matchesStatus;
+      });
+    }
+
+    function renderTasks() {
+      const list = elementById('task-list');
+      list.replaceChildren();
+      elementById('task-count').textContent = `${state.tasks.length} задач`;
+      for (const task of visibleTasks()) {
+        const item = element('li', `item${task.completed ? ' done' : ''}`);
+        const checkbox = element('input', 'check');
+        checkbox.type = 'checkbox';
+        checkbox.checked = task.completed;
+        checkbox.dataset.action = 'toggle-task';
+        checkbox.dataset.id = task.id;
+        checkbox.setAttribute('aria-label', `Выполнена: ${task.title}`);
+        const main = element('div', 'item-main');
+        main.append(element('div', 'item-title', task.title));
+        if (task.description) main.append(element('p', 'item-desc', task.description));
+        const author = state.users.find((user) => user.id === task.author_user_id);
+        main.append(element('div', 'meta', author ? `Автор: ${author.full_name}` : 'Автор удалён'));
+        const actions = element('div', 'item-actions');
+        actions.append(button('Изменить', 'edit-task', task.id), button('Удалить', 'delete-task', task.id, true));
+        item.append(checkbox, main, actions);
+        list.append(item);
+      }
+      if (!list.children.length) list.append(element('li', 'empty', state.tasks.length ? 'Нет задач по выбранному фильтру.' : 'Пока нет задач. Создайте первую выше.'));
+    }
+
+    async function loadAll(path) {
+      const pageSize = 100;
+      const all = [];
+      for (let offset = 0; ; offset += pageSize) {
+        const page = await api(`${path}?limit=${pageSize}&offset=${offset}`);
+        if (!Array.isArray(page)) throw new Error('Некорректный ответ сервера');
+        all.push(...page);
+        if (page.length < pageSize) return all;
+      }
+    }
+
+    async function refresh() {
+      const [users, tasks] = await Promise.all([loadAll('/users'), loadAll('/tasks')]);
+      state.users = Array.isArray(users) ? users : [];
+      state.tasks = Array.isArray(tasks) ? tasks : [];
+      renderUsers();
+      renderTasks();
+      elementById('stat-total').textContent = state.tasks.length;
+      elementById('stat-done').textContent = state.tasks.filter((task) => task.completed).length;
+    }
+
+    async function run(action, successMessage) {
+      clearNotice();
+      try {
+        await action();
+        await refresh();
+        notify(successMessage);
+      } catch (error) {
+        notify(error.message || 'Не удалось выполнить запрос', true);
+      }
+    }
+
+    function resetUserForm() {
+      state.editingUser = null;
+      elementById('user-form').reset();
+      elementById('user-submit').textContent = 'Добавить участника';
+      elementById('user-cancel').hidden = true;
+    }
+    function resetTaskForm() {
+      state.editingTask = null;
+      elementById('task-form').reset();
+      elementById('task-author').disabled = false;
+      elementById('task-submit').textContent = 'Создать задачу';
+      elementById('task-cancel').hidden = true;
+    }
+
+    elementById('user-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const fullName = elementById('user-name').value.trim();
+      const phone = elementById('user-phone').value.trim();
+      const editing = state.editingUser;
+      const payload = editing ? { full_name: fullName, phone_number: phone || null } : { full_name: fullName, ...(phone ? { phone_number: phone } : {}) };
+      await run(async () => {
+        await api(editing ? `/users/${encodeURIComponent(editing)}` : '/users', {
+          method: editing ? 'PATCH' : 'POST', body: JSON.stringify(payload),
+        });
+        resetUserForm();
+      }, editing ? 'Участник обновлён' : 'Участник добавлен');
+    });
+
+    elementById('task-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const title = elementById('task-title').value.trim();
+      const description = elementById('task-description').value.trim();
+      const editing = state.editingTask;
+      const payload = editing
+        ? { title, description: description || null }
+        : { title, ...(description ? { description } : {}), author_user_id: elementById('task-author').value };
+      await run(async () => {
+        await api(editing ? `/tasks/${encodeURIComponent(editing)}` : '/tasks', {
+          method: editing ? 'PATCH' : 'POST', body: JSON.stringify(payload),
+        });
+        resetTaskForm();
+      }, editing ? 'Задача обновлена' : 'Задача создана');
+    });
+
+    elementById('user-list').addEventListener('click', (event) => {
+      const target = event.target.closest('button[data-action]');
+      if (!target) return;
+      const user = state.users.find((item) => item.id === target.dataset.id);
+      if (!user) return;
+      if (target.dataset.action === 'edit-user') {
+        state.editingUser = user.id;
+        elementById('user-name').value = user.full_name;
+        elementById('user-phone').value = user.phone_number || '';
+        elementById('user-submit').textContent = 'Сохранить';
+        elementById('user-cancel').hidden = false;
+        elementById('user-name').focus();
+      } else if (target.dataset.action === 'delete-user') {
+        if (state.tasks.some((task) => task.author_user_id === user.id)) {
+          notify('Сначала удалите задачи этого участника.', true);
+          return;
+        }
+        if (confirm(`Удалить участника "${user.full_name}"?`)) {
+          run(() => api(`/users/${encodeURIComponent(user.id)}`, { method: 'DELETE' }), 'Участник удалён');
+        }
+      }
+    });
+
+    elementById('task-list').addEventListener('click', (event) => {
+      const target = event.target.closest('button[data-action]');
+      if (!target) return;
+      const task = state.tasks.find((item) => item.id === target.dataset.id);
+      if (!task) return;
+      if (target.dataset.action === 'edit-task') {
+        state.editingTask = task.id;
+        elementById('task-title').value = task.title;
+        elementById('task-description').value = task.description || '';
+        elementById('task-author').value = task.author_user_id;
+        elementById('task-author').disabled = true;
+        elementById('task-submit').textContent = 'Сохранить';
+        elementById('task-cancel').hidden = false;
+        elementById('task-title').focus();
+      } else if (target.dataset.action === 'delete-task' && confirm(`Удалить задачу "${task.title}"?`)) {
+        run(() => api(`/tasks/${encodeURIComponent(task.id)}`, { method: 'DELETE' }), 'Задача удалена');
+      }
+    });
+
+    elementById('task-list').addEventListener('change', (event) => {
+      const target = event.target;
+      if (target.dataset.action !== 'toggle-task') return;
+      const task = state.tasks.find((item) => item.id === target.dataset.id);
+      if (!task) return;
+      run(() => api(`/tasks/${encodeURIComponent(task.id)}`, {
+        method: 'PATCH', body: JSON.stringify({ completed: target.checked }),
+      }), target.checked ? 'Задача выполнена' : 'Задача снова в работе').then(() => renderTasks());
+    });
+
+    elementById('user-cancel').addEventListener('click', resetUserForm);
+    elementById('task-cancel').addEventListener('click', resetTaskForm);
+    elementById('task-search').addEventListener('input', renderTasks);
+    elementById('task-filter').addEventListener('change', renderTasks);
+    refresh().catch((error) => notify(`Не удалось загрузить данные: ${error.message}`, true));
+  </script>
+</body>
+</html>

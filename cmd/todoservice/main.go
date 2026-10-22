@@ -22,6 +22,9 @@ import (
 	users_postgres_repository "github.com/darya-kznv/todo-service/internal/features/users/repository/postgres"
 	users_service "github.com/darya-kznv/todo-service/internal/features/users/service"
 	users_transport_http "github.com/darya-kznv/todo-service/internal/features/users/transport/http"
+	web_fs_repository "github.com/darya-kznv/todo-service/internal/features/web/repository/fs"
+	web_service "github.com/darya-kznv/todo-service/internal/features/web/service"
+	web_transport_http "github.com/darya-kznv/todo-service/internal/features/web/transport/http"
 	"go.uber.org/zap"
 )
 
@@ -54,6 +57,7 @@ func main() {
 	usersTransportHTTP := initUsers(pool, logger)
 	tasksTransportHTTP := initTasks(pool, logger)
 	statisticsTransportHTTP := initStatistics(pool, logger)
+	webTransportHTTP := initWeb(logger)
 
 	logger.Debug("initializing HTTP server")
 	httpServer := core_http_server.NewHTTPServer(
@@ -71,10 +75,20 @@ func main() {
 	apiVersionRouter.RegisterRoutes(statisticsTransportHTTP.Routes()...)
 
 	httpServer.RegisterAPIRouters(apiVersionRouter)
+	httpServer.RegisterRoutes(webTransportHTTP.Routes()...)
 
 	if err := httpServer.Run(ctx); err != nil {
 		logger.Error("HTTP server run error", zap.Error(err))
 	}
+}
+
+func initWeb(logger *core_logger.Logger) *web_transport_http.WebHTTPHandler {
+	logger.Debug("initializing feature", zap.String("feature", "web"))
+
+	repo := web_fs_repository.NewWebRepository()
+	service := web_service.NewWebService(repo)
+
+	return web_transport_http.NewWebHTTPHandler(service)
 }
 
 func initUsers(
