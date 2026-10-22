@@ -87,7 +87,8 @@ services:
     image: alpine/socat:1.8.0.3
     container_name: todoservice-port-forwarder
     entrypoint: ["/bin/sh", "-c"]
-    command: "socat tcp-listen:5432,fork,reuseaddr tcp-connect:todoservice-postgres:5432 & exec socat tcp-listen:6379,fork,reuseaddr tcp-connect:todoservice-redis:6379"
+    command:
+    - "socat tcp-listen:5432,fork,reuseaddr tcp-connect:todoservice-postgres:5432 & exec socat tcp-listen:6379,fork,reuseaddr tcp-connect:todoservice-redis:6379"
     ports:
       - "127.0.0.1:5432:5432"
       - "127.0.0.1:6379:6379"
