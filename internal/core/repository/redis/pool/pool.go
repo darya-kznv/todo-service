@@ -11,12 +11,14 @@ type Pool interface {
 	Del(ctx context.Context, keys ...string) IntCmd
 	HGet(ctx context.Context, key string, field string) StringCmd
 	HSet(ctx context.Context, key string, values ...any) IntCmd
+	Expire(ctx context.Context, key string, ttl time.Duration) BoolCmd
 	Close() error
 	TTL() time.Duration
 }
 
 type StringCmd interface {
 	Result() (string, error)
+	Bytes() ([]byte, error)
 	Err() error
 }
 
@@ -27,5 +29,10 @@ type StatusCmd interface {
 
 type IntCmd interface {
 	Result() (int64, error)
+	Err() error
+}
+
+type BoolCmd interface {
+	Result() (bool, error)
 	Err() error
 }

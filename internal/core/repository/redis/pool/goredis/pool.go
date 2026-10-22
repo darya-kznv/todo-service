@@ -52,6 +52,10 @@ func (p *Pool) HSet(ctx context.Context, key string, values ...any) core_redis_p
 	return intCmd{p.client.HSet(ctx, key, values...)}
 }
 
+func (p *Pool) Expire(ctx context.Context, key string, ttl time.Duration) core_redis_pool.BoolCmd {
+	return boolCmd{p.client.Expire(ctx, key, ttl)}
+}
+
 func (p *Pool) Close() error { return p.client.Close() }
 
 func (p *Pool) TTL() time.Duration { return p.ttl }

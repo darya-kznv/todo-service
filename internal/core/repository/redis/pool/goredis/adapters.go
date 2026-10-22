@@ -27,6 +27,11 @@ func (c stringCmd) Err() error {
 	return mapError(c.command.Err())
 }
 
+func (c stringCmd) Bytes() ([]byte, error) {
+	value, err := c.command.Bytes()
+	return value, mapError(err)
+}
+
 type statusCmd struct{ command *redis.StatusCmd }
 
 func (c statusCmd) Result() (string, error) {
@@ -47,5 +52,16 @@ func (c intCmd) Result() (int64, error) {
 }
 
 func (c intCmd) Err() error {
+	return mapError(c.command.Err())
+}
+
+type boolCmd struct{ command *redis.BoolCmd }
+
+func (c boolCmd) Result() (bool, error) {
+	value, err := c.command.Result()
+	return value, mapError(err)
+}
+
+func (c boolCmd) Err() error {
 	return mapError(c.command.Err())
 }
