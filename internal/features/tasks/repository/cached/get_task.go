@@ -39,6 +39,7 @@ func (r *CachedRepository) cacheTask(ctx context.Context, task domain.Task) {
 		r.logger.Error("encode task for Redis cache", zap.String("task_id", task.ID.String()), zap.Error(err))
 		return
 	}
+
 	if err := r.pool.Set(ctx, taskKey(task.ID), data, r.pool.TTL()).Err(); err != nil {
 		r.logger.Error("write task to Redis cache", zap.String("task_id", task.ID.String()), zap.Error(err))
 	}
@@ -48,10 +49,13 @@ func (r *CachedRepository) GetTask(ctx context.Context, id uuid.UUID) (domain.Ta
 	if task, ok := r.getTaskFromCache(ctx, id); ok {
 		return task, nil
 	}
+
 	task, err := r.mainRepository.GetTask(ctx, id)
 	if err != nil {
 		return domain.Task{}, err
 	}
+
 	r.cacheTask(ctx, task)
+
 	return task, nil
 }

@@ -26,7 +26,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_TIMEOUT=${POSTGRES_TIMEOUT}
-      - REDIS_HOST=todoapp-redis
+      - REDIS_HOST=todoservice-redis
       - REDIS_PASSWORD=${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
       - LOGGER_LEVEL=${LOGGER_LEVEL}
       - LOGGER_FOLDER=/app/out/logs
@@ -38,7 +38,7 @@ services:
     depends_on:
       todoservice-postgres:
         condition: service_healthy
-      todoapp-redis:
+      todoservice-redis:
         condition: service_healthy
     restart: always
 
@@ -59,9 +59,9 @@ services:
       start_period: 10s
     restart: always
 
-  todoapp-redis:
+  todoservice-redis:
     image: redis:8.6.1
-    container_name: todoapp-env-redis
+    container_name: todoservice-env-redis
     environment:
       REDIS_PASSWORD: ${REDIS_PASSWORD:?Set REDIS_PASSWORD in .env}
     command: ["sh", "-c", "exec redis-server --requirepass \"$$REDIS_PASSWORD\""]
@@ -87,7 +87,7 @@ services:
     image: alpine/socat:1.8.0.3
     container_name: todoservice-port-forwarder
     entrypoint: ["/bin/sh", "-c"]
-    command: "socat tcp-listen:5432,fork,reuseaddr tcp-connect:todoservice-postgres:5432 & exec socat tcp-listen:6379,fork,reuseaddr tcp-connect:todoapp-redis:6379"
+    command: "socat tcp-listen:5432,fork,reuseaddr tcp-connect:todoservice-postgres:5432 & exec socat tcp-listen:6379,fork,reuseaddr tcp-connect:todoservice-redis:6379"
     ports:
       - "127.0.0.1:5432:5432"
       - "127.0.0.1:6379:6379"

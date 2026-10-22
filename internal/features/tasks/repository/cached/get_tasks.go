@@ -22,6 +22,7 @@ func (r *CachedRepository) GetTasks(ctx context.Context, limit, offset *int, use
 			if err == nil {
 				err = errors.New("cached task list is null")
 			}
+
 			r.logger.Error("decode cached task list", zap.String("key", key), zap.String("field", field), zap.Error(err))
 		}
 	} else if !errors.Is(cacheErr, core_redis_pool.NotFound) {
@@ -32,6 +33,7 @@ func (r *CachedRepository) GetTasks(ctx context.Context, limit, offset *int, use
 	if err != nil {
 		return nil, err
 	}
+
 	data, err = json.Marshal(domainsToModels(tasks))
 	if err != nil {
 		r.logger.Error("encode task list for Redis cache", zap.String("key", key), zap.Error(err))
@@ -41,7 +43,7 @@ func (r *CachedRepository) GetTasks(ctx context.Context, limit, offset *int, use
 		r.logger.Error("write task list to Redis cache", zap.String("key", key), zap.String("field", field), zap.Error(err))
 		return tasks, nil
 	}
-	// Hash fields share one TTL; if setting it fails, remove the hash to avoid an unbounded stale entry.
+
 	expired, err := r.pool.Expire(ctx, key, r.pool.TTL()).Result()
 	if err != nil || !expired {
 		if err != nil {
@@ -53,5 +55,6 @@ func (r *CachedRepository) GetTasks(ctx context.Context, limit, offset *int, use
 			r.logger.Error("remove task list without TTL", zap.String("key", key), zap.Error(err))
 		}
 	}
+
 	return tasks, nil
 }

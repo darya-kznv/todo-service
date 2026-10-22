@@ -20,30 +20,46 @@ type TaskModel struct {
 
 func domainToModel(task domain.Task) TaskModel {
 	return TaskModel{
-		ID: task.ID, Version: task.Version, Title: task.Title,
-		Description: task.Description, Completed: task.Completed,
-		CompletedAt: task.CompletedAt, CreatedAt: task.CreatedAt,
+		ID:           task.ID,
+		Version:      task.Version,
+		Title:        task.Title,
+		Description:  task.Description,
+		Completed:    task.Completed,
+		CompletedAt:  task.CompletedAt,
+		CreatedAt:    task.CreatedAt,
 		AuthorUserID: task.AuthorUserID,
 	}
 }
 
 func modelToDomain(task TaskModel) domain.Task {
-	return domain.NewTask(task.ID, task.Version, task.Title, task.Description,
-		task.Completed, task.CompletedAt, task.CreatedAt, task.AuthorUserID)
+	return domain.NewTask(
+		task.ID,
+		task.Version,
+		task.Title,
+		task.Description,
+		task.Completed,
+		task.CompletedAt,
+		task.CreatedAt,
+		task.AuthorUserID,
+	)
 }
 
 func domainsToModels(tasks []domain.Task) []TaskModel {
 	models := make([]TaskModel, len(tasks))
+
 	for i, task := range tasks {
 		models[i] = domainToModel(task)
 	}
+
 	return models
 }
 
 func modelsToDomains(models []TaskModel) []domain.Task {
 	tasks := make([]domain.Task, len(models))
+
 	for i, model := range models {
 		tasks[i] = modelToDomain(model)
 	}
+
 	return tasks
 }

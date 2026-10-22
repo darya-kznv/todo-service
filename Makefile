@@ -4,10 +4,10 @@ export
 export PROJECT_ROOT=$(shell pwd)
 
 env-up:
-	@docker compose up -d todoservice-postgres todoapp-redis
+	@docker compose up -d todoservice-postgres todoservice-redis
 
 env-down:
-	@docker compose down todoservice-postgres
+	@docker compose down todoservice-postgres todoservice-redis
 
 env-cleanup:
 	@read -p "Очистить все volume файлы окружения? Опасность утери данных. [y/N]: " ans; \
