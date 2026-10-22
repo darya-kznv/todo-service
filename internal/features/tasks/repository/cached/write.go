@@ -10,10 +10,14 @@ import (
 
 func (r *CachedRepository) invalidateTasks(ctx context.Context, userID uuid.UUID, taskID *uuid.UUID) {
 	keys := []string{tasksListKey(nil), tasksListKey(&userID)}
+
 	if taskID != nil {
 		keys = append(keys, taskKey(*taskID))
 	}
-	r.logCacheError("invalidate task cache", r.pool.Del(ctx, keys...).Err(), zap.Strings("keys", keys))
+
+	if err := r.pool.Del(ctx, keys...).Err(); err != nil {
+		r.logger.Error("invalidate task cache", zap.Strings("keys", keys), zap.Error(err))
+	}
 }
 
 func (r *CachedRepository) CreateTask(ctx context.Context, task domain.Task) (domain.Task, error) {
@@ -21,10 +25,10 @@ func (r *CachedRepository) CreateTask(ctx context.Context, task domain.Task) (do
 	if err != nil {
 		return domain.Task{}, err
 	}
-	cacheCtx, cancel := cacheWriteContext(ctx)
-	defer cancel()
-	r.invalidateTasks(cacheCtx, created.AuthorUserID, nil)
-	r.cacheTask(cacheCtx, created)
+
+	r.invalidateTasks(ctx, created.AuthorUserID, nil)
+	r.cacheTask(ctx, created)
+
 	return created, nil
 }
 
@@ -33,28 +37,29 @@ func (r *CachedRepository) PatchTask(ctx context.Context, id uuid.UUID, task dom
 	if err != nil {
 		return domain.Task{}, err
 	}
-	cacheCtx, cancel := cacheWriteContext(ctx)
-	defer cancel()
-	r.invalidateTasks(cacheCtx, patched.AuthorUserID, &id)
-	r.cacheTask(cacheCtx, patched)
+
+	r.invalidateTasks(ctx, patched.AuthorUserID, &id)
+	r.cacheTask(ctx, patched)
+
 	return patched, nil
 }
 
 func (r *CachedRepository) DeleteTask(ctx context.Context, id uuid.UUID) error {
-	// The author is needed to invalidate their paginated list after deletion.
 	task, ok := r.getTaskFromCache(ctx, id)
 	if !ok {
 		var err error
+
 		task, err = r.mainRepository.GetTask(ctx, id)
 		if err != nil {
 			return err
 		}
 	}
+
 	if err := r.mainRepository.DeleteTask(ctx, id); err != nil {
 		return err
 	}
-	cacheCtx, cancel := cacheWriteContext(ctx)
-	defer cancel()
-	r.invalidateTasks(cacheCtx, task.AuthorUserID, &id)
+
+	r.invalidateTasks(ctx, task.AuthorUserID, &id)
+
 	return nil
 }

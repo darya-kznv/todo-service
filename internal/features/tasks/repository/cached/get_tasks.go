@@ -13,9 +13,7 @@ import (
 
 func (r *CachedRepository) GetTasks(ctx context.Context, limit, offset *int, userID *uuid.UUID) ([]domain.Task, error) {
 	key, field := tasksListKey(userID), tasksListField(limit, offset)
-	cacheCtx, cancel := cacheRequestContext(ctx)
-	data, cacheErr := r.pool.HGet(cacheCtx, key, field).Bytes()
-	cancel()
+	data, cacheErr := r.pool.HGet(ctx, key, field).Bytes()
 	if cacheErr == nil {
 		var models []TaskModel
 		if err := json.Unmarshal(data, &models); err == nil && models != nil {
@@ -24,10 +22,10 @@ func (r *CachedRepository) GetTasks(ctx context.Context, limit, offset *int, use
 			if err == nil {
 				err = errors.New("cached task list is null")
 			}
-			r.logCacheError("decode cached task list", err, zap.String("key", key), zap.String("field", field))
+			r.logger.Error("decode cached task list", zap.String("key", key), zap.String("field", field), zap.Error(err))
 		}
 	} else if !errors.Is(cacheErr, core_redis_pool.NotFound) {
-		r.logCacheError("read task list from Redis cache", cacheErr, zap.String("key", key), zap.String("field", field))
+		r.logger.Error("read task list from Redis cache", zap.String("key", key), zap.String("field", field), zap.Error(cacheErr))
 	}
 
 	tasks, err := r.mainRepository.GetTasks(ctx, limit, offset, userID)
@@ -36,26 +34,24 @@ func (r *CachedRepository) GetTasks(ctx context.Context, limit, offset *int, use
 	}
 	data, err = json.Marshal(domainsToModels(tasks))
 	if err != nil {
-		r.logCacheError("encode task list for Redis cache", err, zap.String("key", key))
+		r.logger.Error("encode task list for Redis cache", zap.String("key", key), zap.Error(err))
 		return tasks, nil
 	}
-	cacheCtx, cancel = cacheRequestContext(ctx)
-	defer cancel()
-	if err := r.pool.HSet(cacheCtx, key, field, data).Err(); err != nil {
-		r.logCacheError("write task list to Redis cache", err, zap.String("key", key), zap.String("field", field))
+	if err := r.pool.HSet(ctx, key, field, data).Err(); err != nil {
+		r.logger.Error("write task list to Redis cache", zap.String("key", key), zap.String("field", field), zap.Error(err))
 		return tasks, nil
 	}
 	// Hash fields share one TTL; if setting it fails, remove the hash to avoid an unbounded stale entry.
-	expired, err := r.pool.Expire(cacheCtx, key, r.pool.TTL()).Result()
+	expired, err := r.pool.Expire(ctx, key, r.pool.TTL()).Result()
 	if err != nil || !expired {
 		if err != nil {
-			r.logCacheError("set task list cache TTL", err, zap.String("key", key))
+			r.logger.Error("set task list cache TTL", zap.String("key", key), zap.Error(err))
 		} else {
 			r.logger.Error("task list cache key was absent when setting TTL", zap.String("key", key))
 		}
-		cleanupCtx, cleanupCancel := cacheWriteContext(ctx)
-		defer cleanupCancel()
-		r.logCacheError("remove task list without TTL", r.pool.Del(cleanupCtx, key).Err(), zap.String("key", key))
+		if err := r.pool.Del(ctx, key).Err(); err != nil {
+			r.logger.Error("remove task list without TTL", zap.String("key", key), zap.Error(err))
+		}
 	}
 	return tasks, nil
 }

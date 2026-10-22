@@ -12,36 +12,36 @@ import (
 )
 
 func (r *CachedRepository) getTaskFromCache(ctx context.Context, id uuid.UUID) (domain.Task, bool) {
-	cacheCtx, cancel := cacheRequestContext(ctx)
-	defer cancel()
-	data, err := r.pool.Get(cacheCtx, taskKey(id)).Bytes()
+	data, err := r.pool.Get(ctx, taskKey(id)).Bytes()
 	if err != nil {
 		if !errors.Is(err, core_redis_pool.NotFound) {
-			r.logCacheError("read task from Redis cache", err, zap.String("task_id", id.String()))
+			r.logger.Error("read task from Redis cache", zap.String("task_id", id.String()), zap.Error(err))
 		}
 		return domain.Task{}, false
 	}
+
 	var model TaskModel
 	if err := json.Unmarshal(data, &model); err != nil {
-		r.logCacheError("decode cached task", err, zap.String("task_id", id.String()))
+		r.logger.Error("decode cached task", zap.String("task_id", id.String()), zap.Error(err))
 		return domain.Task{}, false
 	}
 	if model.ID != id {
 		r.logger.Error("cached task ID does not match key", zap.String("task_id", id.String()), zap.String("cached_id", model.ID.String()))
 		return domain.Task{}, false
 	}
+
 	return modelToDomain(model), true
 }
 
 func (r *CachedRepository) cacheTask(ctx context.Context, task domain.Task) {
 	data, err := json.Marshal(domainToModel(task))
 	if err != nil {
-		r.logCacheError("encode task for Redis cache", err, zap.String("task_id", task.ID.String()))
+		r.logger.Error("encode task for Redis cache", zap.String("task_id", task.ID.String()), zap.Error(err))
 		return
 	}
-	cacheCtx, cancel := cacheRequestContext(ctx)
-	defer cancel()
-	r.logCacheError("write task to Redis cache", r.pool.Set(cacheCtx, taskKey(task.ID), data, r.pool.TTL()).Err(), zap.String("task_id", task.ID.String()))
+	if err := r.pool.Set(ctx, taskKey(task.ID), data, r.pool.TTL()).Err(); err != nil {
+		r.logger.Error("write task to Redis cache", zap.String("task_id", task.ID.String()), zap.Error(err))
+	}
 }
 
 func (r *CachedRepository) GetTask(ctx context.Context, id uuid.UUID) (domain.Task, error) {

@@ -15,7 +15,9 @@ func mapError(err error) error {
 	return err
 }
 
-type stringCmd struct{ command *redis.StringCmd }
+type stringCmd struct {
+	command *redis.StringCmd
+}
 
 func (c stringCmd) Result() (string, error) {
 	value, err := c.command.Result()
@@ -29,10 +31,13 @@ func (c stringCmd) Err() error {
 
 func (c stringCmd) Bytes() ([]byte, error) {
 	value, err := c.command.Bytes()
+
 	return value, mapError(err)
 }
 
-type statusCmd struct{ command *redis.StatusCmd }
+type statusCmd struct {
+	command *redis.StatusCmd
+}
 
 func (c statusCmd) Result() (string, error) {
 	value, err := c.command.Result()
@@ -44,10 +49,13 @@ func (c statusCmd) Err() error {
 	return mapError(c.command.Err())
 }
 
-type intCmd struct{ command *redis.IntCmd }
+type intCmd struct {
+	command *redis.IntCmd
+}
 
 func (c intCmd) Result() (int64, error) {
 	value, err := c.command.Result()
+
 	return value, mapError(err)
 }
 
@@ -55,10 +63,13 @@ func (c intCmd) Err() error {
 	return mapError(c.command.Err())
 }
 
-type boolCmd struct{ command *redis.BoolCmd }
+type boolCmd struct {
+	command *redis.BoolCmd
+}
 
 func (c boolCmd) Result() (bool, error) {
 	value, err := c.command.Result()
+
 	return value, mapError(err)
 }
 
