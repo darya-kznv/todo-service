@@ -5,6 +5,7 @@ import (
 
 	"github.com/darya-kznv/todo-service/internal/core/domain"
 	"github.com/google/uuid"
+	"go.uber.org/zap"
 )
 
 func (r *CachedRepository) invalidateTasks(ctx context.Context, userID uuid.UUID, taskID *uuid.UUID) {
@@ -12,7 +13,7 @@ func (r *CachedRepository) invalidateTasks(ctx context.Context, userID uuid.UUID
 	if taskID != nil {
 		keys = append(keys, taskKey(*taskID))
 	}
-	_ = r.pool.Del(ctx, keys...).Err()
+	r.logCacheError("invalidate task cache", r.pool.Del(ctx, keys...).Err(), zap.Strings("keys", keys))
 }
 
 func (r *CachedRepository) CreateTask(ctx context.Context, task domain.Task) (domain.Task, error) {
