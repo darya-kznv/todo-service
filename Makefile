@@ -4,10 +4,10 @@ export
 export PROJECT_ROOT=$(shell pwd)
 
 env-up:
-	@docker compose up -d todoservice-postgres
+	@docker compose up -d todoservice-postgres todoservice-redis
 
 env-down:
-	@docker compose down todoservice-postgres
+	@docker compose down todoservice-postgres todoservice-redis
 
 env-cleanup:
 	@read -p "Очистить все volume файлы окружения? Опасность утери данных. [y/N]: " ans; \
@@ -66,6 +66,7 @@ migrate-action:
 todoservice-run:
 	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
 	export POSTGRES_HOST=localhost && \
+	export REDIS_HOST=localhost && \
 	go mod tidy && \
 	go run ${PROJECT_ROOT}/cmd/todoservice/main.go
 
